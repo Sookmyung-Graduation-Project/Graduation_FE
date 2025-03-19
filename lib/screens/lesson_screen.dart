@@ -1,12 +1,26 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:phonics/widgets/basic_lg_button.dart';
 import 'custom_progress_bar.dart'; // 공룡 ProgressBar Import
+import '../widgets/basic_lg_button.dart';
 
-class LessonScreen extends StatelessWidget {
+class LessonScreen extends StatefulWidget {
   final int lessonNumber;
 
   const LessonScreen({super.key, required this.lessonNumber});
+
+  @override
+  _LessonScreenState createState() => _LessonScreenState();
+}
+
+class _LessonScreenState extends State<LessonScreen> {
+  double progress = 0.0; // 진행도 상태
+
+  /// 진행도를 증가시키는 함수
+  void _updateProgress() {
+    setState(() {
+      progress += 0.2;
+      if (progress > 1.0) progress = 1.0; // 최대 100%
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +29,7 @@ class LessonScreen extends StatelessWidget {
         backgroundColor: const Color(0xffFFFFEB),
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context); //뒤로가기
+            Navigator.pop(context);
           },
           color: const Color(0xff7C7B73),
           icon: const Icon(Icons.arrow_back),
@@ -25,53 +39,31 @@ class LessonScreen extends StatelessWidget {
       backgroundColor: const Color(0xffFFFFEB),
       body: Column(
         children: [
-          // 뒤로 가기 버튼 + ProgressBar 한 줄에 배치
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
             child: Row(
               children: [
-                const SizedBox(width: 10), // 버튼과 ProgressBar 사이 여백 추가
+                const SizedBox(width: 10),
                 Expanded(
-                    child:
-                        _buildProgressBar()), // ProgressBar가 가능한 공간을 차지하도록 설정
+                    child: DinosaurProgressBar(progress: progress)), // 상태 반영
               ],
             ),
           ),
-
-          // 레슨 콘텐츠 (예: 텍스트 등 추가 가능)
           Expanded(
             child: Center(
               child: Text(
-                'Content for Lesson $lessonNumber',
+                'Lesson ${widget.lessonNumber} Content', // 레슨 번호 반영
                 style:
                     const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),
           ),
-
-          // 하단 버튼을 배치
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20),
-            child: _buildBasicButton(),
+            child: BasicLgButton(onPressed: _updateProgress), // 버튼이 눌리면 진행도 증가
           ),
         ],
       ),
-    );
-  }
-
-  /// ProgressBar 배치
-  Widget _buildProgressBar() {
-    return const Padding(
-      padding: EdgeInsets.symmetric(horizontal: 10),
-      child: DinosaurProgressBar(), // ProgressBar 추가
-    );
-  }
-
-  /// 다음으로 넘어가는 버튼 (하단)
-  Widget _buildBasicButton() {
-    return const Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20),
-      child: BasicLgButton(),
     );
   }
 }

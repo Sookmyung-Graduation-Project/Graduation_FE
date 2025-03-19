@@ -1,46 +1,56 @@
 import 'package:flutter/material.dart';
-import 'package:phonics/screens/lesson_screen.dart';
 
-class BasicLgButton extends StatelessWidget {
-  const BasicLgButton({super.key});
+class BasicLgButton extends StatefulWidget {
+  final VoidCallback onPressed; // 버튼이 눌릴 때 실행될 콜백
+
+  const BasicLgButton({super.key, required this.onPressed});
+
+  @override
+  _BasicLgButtonState createState() => _BasicLgButtonState();
+}
+
+class _BasicLgButtonState extends State<BasicLgButton> {
+  bool _isPressed = false;
 
   @override
   Widget build(BuildContext context) {
-    return _buildButton(
-      color: const Color(0xffFAC632),
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>
-                const LessonScreen(lessonNumber: 2), // 올바르게 수정
-          ),
-        );
-      },
-    );
-  }
-
-  /// 버튼을 생성하는 위젯
-  Widget _buildButton({
-    required Color color,
-    required VoidCallback onTap,
-  }) {
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
+      onTapDown: (_) {
+        setState(() {
+          _isPressed = true;
+        });
+      },
+      onTapUp: (_) {
+        setState(() {
+          _isPressed = false;
+        });
+        widget.onPressed(); // 버튼 클릭 시 진행도 증가
+      },
+      onTapCancel: () {
+        setState(() {
+          _isPressed = false;
+        });
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 100),
+        transform: _isPressed
+            ? Matrix4.translationValues(0, 4, 0)
+            : Matrix4.identity(),
         width: 331,
         height: 55,
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 100),
         decoration: BoxDecoration(
-          color: color,
+          color: const Color(0xffFAC632),
           borderRadius: BorderRadius.circular(22),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0xffE9B729),
-              spreadRadius: 2, // 그림자 확산 정도
-              offset: Offset(2, 2), // 그림자 위치 (X, Y)
-            ),
-          ],
+          boxShadow: _isPressed
+              ? []
+              : [
+                  const BoxShadow(
+                    color: Color(0xffE9B729),
+                    spreadRadius: 2,
+                    offset: Offset(2, 2),
+                  ),
+                ],
         ),
         child: const Icon(
           Icons.arrow_forward_rounded,
