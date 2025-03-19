@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 import 'dart:ui';
+import 'package:flutter/material.dart';
+import 'package:phonics/widgets/basic_lg_button.dart';
 import 'custom_progress_bar.dart'; // 공룡 ProgressBar Import
 
 class LessonScreen extends StatelessWidget {
@@ -10,58 +11,67 @@ class LessonScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color(0xffFFFFEB),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context); //뒤로가기
+          },
+          color: const Color(0xff7C7B73),
+          icon: const Icon(Icons.arrow_back),
+          iconSize: 30,
+        ),
+      ),
       backgroundColor: const Color(0xffFFFFEB),
-      body: Stack(
+      body: Column(
         children: [
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+          // 뒤로 가기 버튼 + ProgressBar 한 줄에 배치
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+            child: Row(
               children: [
-                Text(
-                  'Content for Lesson $lessonNumber',
-                  style: const TextStyle(
-                      fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 40),
-                const Expanded(
-                  child: DinosaurProgressBar(),
-                ),
+                const SizedBox(width: 10), // 버튼과 ProgressBar 사이 여백 추가
+                Expanded(
+                    child:
+                        _buildProgressBar()), // ProgressBar가 가능한 공간을 차지하도록 설정
               ],
             ),
           ),
-          _buildBackButton(context),
+
+          // 레슨 콘텐츠 (예: 텍스트 등 추가 가능)
+          Expanded(
+            child: Center(
+              child: Text(
+                'Content for Lesson $lessonNumber',
+                style:
+                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+
+          // 하단 버튼을 배치
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            child: _buildBasicButton(),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildBackButton(BuildContext context) {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Align(
-          alignment: Alignment.topLeft,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(50),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: const Color(0xffFFDF83).withOpacity(0.6),
-                  shape: BoxShape.circle,
-                ),
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.arrow_back_rounded,
-                    color: Color(0xff7C7B73),
-                  ),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
+  /// ProgressBar 배치
+  Widget _buildProgressBar() {
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      child: DinosaurProgressBar(), // ProgressBar 추가
+    );
+  }
+
+  /// 다음으로 넘어가는 버튼 (하단)
+  Widget _buildBasicButton() {
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20),
+      child: BasicLgButton(),
     );
   }
 }
