@@ -16,7 +16,6 @@ For help getting started with Flutter development, view the
 samples, guidance on mobile development, and a full API reference.
 
 ## GIF
-## GIF
 <p align="center">
-  <img src="assets/gifs/your-video.gif" width="300">
+  <img src="https://github.com/user-attachments/assets/f2dec122-9369-4403-8066-01af3b3c7454" width="300">
 </p>
