@@ -23,7 +23,8 @@ class _DinosaurProgressBarState extends State<DinosaurProgressBar> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFFFFDE5), // 배경색 (연한 크림색)
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.only(left: 30.0, right: 20.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:phonics/%08screens/custom_progressbar.dart';
-import '../screens/quiz_screen.dart';
+import 'package:phonics/screens/quiz_screen.dart';
 
 class QuizButton extends StatelessWidget {
   const QuizButton({super.key});
@@ -13,7 +12,7 @@ class QuizButton extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const DinosaurProgressBar()),
+          MaterialPageRoute(builder: (context) => const QuizScreen()),
         );
       },
     );
