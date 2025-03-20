@@ -18,4 +18,7 @@ samples, guidance on mobile development, and a full API reference.
 ## GIF
 <p align="center">
   <img src="https://github.com/user-attachments/assets/f2dec122-9369-4403-8066-01af3b3c7454" width="300">
+  <img src="https://github.com/user-attachments/assets/a2f430e3-888a-4d64-b252-498441b7abba" width="300">
 </p>
+
+
