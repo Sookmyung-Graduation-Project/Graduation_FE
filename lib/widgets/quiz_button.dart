@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:phonics/screens/quiz_screen.dart';
+import 'draggable_widget.dart';
 
 class QuizButton extends StatelessWidget {
   const QuizButton({super.key});
@@ -12,6 +13,8 @@ class QuizButton extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
+          // MaterialPageRoute(builder: (context) => const QuizScreen()),
+
           MaterialPageRoute(builder: (context) => const QuizScreen()),
         );
       },

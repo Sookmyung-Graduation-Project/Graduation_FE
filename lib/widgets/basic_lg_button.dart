@@ -31,31 +31,34 @@ class _BasicLgButtonState extends State<BasicLgButton> {
           _isPressed = false;
         });
       },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 100),
-        transform: _isPressed
-            ? Matrix4.translationValues(0, 4, 0)
-            : Matrix4.identity(),
-        width: 331,
-        height: 55,
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 100),
-        decoration: BoxDecoration(
-          color: const Color(0xffFAC632),
-          borderRadius: BorderRadius.circular(22),
-          boxShadow: _isPressed
-              ? []
-              : [
-                  const BoxShadow(
-                    color: Color(0xffE9B729),
-                    spreadRadius: 2,
-                    offset: Offset(2, 2),
-                  ),
-                ],
-        ),
-        child: const Icon(
-          Icons.arrow_forward_rounded,
-          color: Colors.white,
-          size: 50,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 40.0),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 100),
+          transform: _isPressed
+              ? Matrix4.translationValues(0, 4, 0)
+              : Matrix4.identity(),
+          width: 331,
+          height: 55,
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 100),
+          decoration: BoxDecoration(
+            color: const Color(0xffFAC632),
+            borderRadius: BorderRadius.circular(22),
+            boxShadow: _isPressed
+                ? []
+                : [
+                    const BoxShadow(
+                      color: Color(0xffE9B729),
+                      spreadRadius: 2,
+                      offset: Offset(2, 2),
+                    ),
+                  ],
+          ),
+          child: const Icon(
+            Icons.arrow_forward_rounded,
+            color: Colors.white,
+            size: 50,
+          ),
         ),
       ),
     );
