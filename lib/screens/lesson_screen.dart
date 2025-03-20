@@ -21,8 +21,17 @@ class _LessonScreenState extends State<LessonScreen> {
   /// 진행도를 증가시키는 함수
   void _updateProgress() {
     setState(() {
-      progress += 0.07; //1단계당 15, step 0.066667 반올림
+      progress += 0.07; // 1단계당 15, step 0.066667 반올림
       if (progress > 1.0) progress = 1.0; // 최대 100%
+    });
+
+    // 500ms(0.5초) 후에 버튼 숨기기
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (mounted) {
+        setState(() {
+          _isButtonLgVisible = false;
+        });
+      }
     });
   }
 
@@ -32,12 +41,14 @@ class _LessonScreenState extends State<LessonScreen> {
       draggablePosition = position;
     });
 
-    /// 2초(2000ms) 후에 DraggableContainer 숨기기
-    Future.delayed(const Duration(milliseconds: 500), () {
-      setState(() {
-        _isDraggableVisible = false;
-        _isButtonLgVisible = true;
-      });
+    /// 800ms 후에 DraggableContainer 숨기고 버튼 표시
+    Future.delayed(const Duration(milliseconds: 800), () {
+      if (mounted) {
+        setState(() {
+          _isDraggableVisible = false;
+          _isButtonLgVisible = true;
+        });
+      }
     });
   }
 
