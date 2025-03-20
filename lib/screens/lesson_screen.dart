@@ -16,11 +16,12 @@ class _LessonScreenState extends State<LessonScreen> {
   double progress = 0.0; // 진행도 상태
   Offset draggablePosition = const Offset(100, 100); // 기본 드래그 위치
   bool _isDraggableVisible = true; // 드래그 가능한 위젯의 가시성 상태
+  bool _isButtonLgVisible = false;
 
   /// 진행도를 증가시키는 함수
   void _updateProgress() {
     setState(() {
-      progress += 0.07; //1단계당 15step 0.066667 반올림
+      progress += 0.07; //1단계당 15, step 0.066667 반올림
       if (progress > 1.0) progress = 1.0; // 최대 100%
     });
   }
@@ -31,10 +32,11 @@ class _LessonScreenState extends State<LessonScreen> {
       draggablePosition = position;
     });
 
-    // 2초(2000ms) 후에 DraggableContainer 숨기기
+    /// 2초(2000ms) 후에 DraggableContainer 숨기기
     Future.delayed(const Duration(milliseconds: 500), () {
       setState(() {
         _isDraggableVisible = false;
+        _isButtonLgVisible = true;
       });
     });
   }
@@ -78,8 +80,10 @@ class _LessonScreenState extends State<LessonScreen> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20),
-                child:
-                    BasicLgButton(onPressed: _updateProgress), // 버튼이 눌리면 진행도 증가
+                child: _isButtonLgVisible
+                    ? BasicLgButton(
+                        onPressed: _updateProgress) // 버튼이 눌리면 진행도 증가
+                    : const SizedBox(),
               ),
             ],
           ),
