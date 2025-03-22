@@ -16,7 +16,7 @@ class QuizButton extends StatelessWidget {
           context,
           // MaterialPageRoute(builder: (context) => const QuizScreen()),
 
-          MaterialPageRoute(builder: (context) => const PhonicsWordWidget()),
+          MaterialPageRoute(builder: (context) => const QuizScreen()),
         );
       },
     );

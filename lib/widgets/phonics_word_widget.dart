@@ -1,44 +1,92 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 
 class PhonicsWordWidget extends StatefulWidget {
-  const PhonicsWordWidget({super.key});
+  final String imagePath;
+  final String firstLetter;
+  final String restOfWord;
+
+  const PhonicsWordWidget({
+    super.key,
+    required this.imagePath,
+    required this.firstLetter,
+    required this.restOfWord,
+  });
 
   @override
-  _PhonicsWordWidgetState createState() => _PhonicsWordWidgetState();
+  State<PhonicsWordWidget> createState() => _PhonicsWordWidgetState();
 }
 
-class _PhonicsWordWidgetState extends State<PhonicsWordWidget> {
+class _PhonicsWordWidgetState extends State<PhonicsWordWidget>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+  int _repeatCount = 0;
+  final int _maxRepeats = 4; //scale transition 반복 횟수 지정
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+
+    _animation = TweenSequence([
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.2), weight: 50),
+      TweenSequenceItem(tween: Tween(begin: 1.2, end: 1.0), weight: 50),
+    ]).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    ));
+
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _repeatCount++;
+        if (_repeatCount < _maxRepeats) {
+          _controller.forward(from: 0); // 다시 시작
+        }
+      }
+    });
+
+    _controller.forward(); // 첫 시작
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        // Column 전체를 중앙 정렬
-        child: Column(
-          children: [
-            Image.asset(
-              'assets/images/1.png',
-              width: 200,
-              height: 200,
-            ),
-            const Row(
-              mainAxisSize: MainAxisSize.min, // 내용만큼만 Column이 차지하게
-              children: [
-                Text(
-                  'A',
-                  style: TextStyle(
-                      fontSize: 64,
-                      color: Color(0xffd84040),
-                      fontWeight: FontWeight.bold),
+    return ScaleTransition(
+      scale: _animation,
+      child: Column(
+        children: [
+          Image.asset(
+            widget.imagePath,
+            width: 200,
+            height: 200,
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                widget.firstLetter,
+                style: const TextStyle(
+                  fontSize: 64,
+                  color: Color(0xffd84040),
+                  fontWeight: FontWeight.bold,
                 ),
-                Text(
-                  'pple',
-                  style: TextStyle(fontSize: 64, color: Colors.black),
-                )
-              ],
-            ),
-          ],
-        ),
+              ),
+              Text(
+                widget.restOfWord,
+                style: const TextStyle(fontSize: 64, color: Colors.black),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

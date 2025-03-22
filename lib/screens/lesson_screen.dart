@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'custom_progress_bar.dart'; // 공룡 ProgressBar Import
 import '../widgets/basic_lg_button.dart';
 import '../widgets/draggable_widget.dart'; // 새로운 위젯 import
+import '../widgets/phonics_word_widget.dart';
 
 class LessonScreen extends StatefulWidget {
   final int lessonNumber;
@@ -17,8 +18,9 @@ class _LessonScreenState extends State<LessonScreen> {
   Offset draggablePosition = const Offset(100, 100); // 기본 드래그 위치
   bool _isDraggableVisible = true; // 드래그 가능한 위젯의 가시성 상태
   bool _isButtonLgVisible = false;
+  bool _isPhonicsWordVisible = false; //파닉스 이미지, text 그림 visible 상태
 
-  /// 진행도를 증가시키는 함수
+  /// progress bar 진행도 증가
   void _updateProgress() {
     setState(() {
       progress += 0.07; // 1단계당 15, step 0.066667 반올림
@@ -30,6 +32,7 @@ class _LessonScreenState extends State<LessonScreen> {
       if (mounted) {
         setState(() {
           _isButtonLgVisible = false;
+          _isPhonicsWordVisible = true;
         });
       }
     });
@@ -47,6 +50,7 @@ class _LessonScreenState extends State<LessonScreen> {
         setState(() {
           _isDraggableVisible = false;
           _isButtonLgVisible = true;
+          _isPhonicsWordVisible = false;
         });
       }
     });
@@ -86,6 +90,12 @@ class _LessonScreenState extends State<LessonScreen> {
                   ],
                 ),
               ),
+              if (_isPhonicsWordVisible)
+                const PhonicsWordWidget(
+                  imagePath: 'assets/images/1.png',
+                  firstLetter: 'A',
+                  restOfWord: 'pple',
+                ),
               const Expanded(
                 child: Center(),
               ),
