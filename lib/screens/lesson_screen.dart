@@ -56,6 +56,16 @@ class _LessonScreenState extends State<LessonScreen> {
     });
   }
 
+  ///scale transition 후 disvisible
+  void _afterTransition() {
+    Future.delayed(const Duration(milliseconds: 500), () {
+      setState(() {
+        _isPhonicsWordVisible = false;
+        _isButtonLgVisible = true;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -91,10 +101,16 @@ class _LessonScreenState extends State<LessonScreen> {
                 ),
               ),
               if (_isPhonicsWordVisible)
-                const PhonicsWordWidget(
-                  imagePath: 'assets/images/1.png',
-                  firstLetter: 'A',
-                  restOfWord: 'pple',
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 50,
+                  ),
+                  child: PhonicsWordWidget(
+                    imagePath: 'assets/images/1.png',
+                    firstLetter: 'A',
+                    restOfWord: 'pple',
+                    onFinished: _afterTransition,
+                  ),
                 ),
               const Expanded(
                 child: Center(),
