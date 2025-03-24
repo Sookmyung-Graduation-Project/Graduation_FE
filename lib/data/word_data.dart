@@ -49,4 +49,39 @@ final List<Map<String, String>> phonicsWords = [
     "firstLetter": "E",
     "restOfWord": "lephant"
   },
+  {
+    "imagePath": "assets/images/words/11.png",
+    "firstLetter": "f",
+    "restOfWord": "an"
+  },
+  {
+    "imagePath": "assets/images/words/12.png",
+    "firstLetter": "f",
+    "restOfWord": "ish"
+  },
+  {
+    "imagePath": "assets/images/words/13.png",
+    "firstLetter": "g",
+    "restOfWord": "oat"
+  },
+  {
+    "imagePath": "assets/images/words/14.png",
+    "firstLetter": "g",
+    "restOfWord": "rape"
+  },
+  {
+    "imagePath": "assets/images/words/15.png",
+    "firstLetter": "h",
+    "restOfWord": "at"
+  },
+  {
+    "imagePath": "assets/images/words/16.png",
+    "firstLetter": "h",
+    "restOfWord": "en"
+  },
+  {
+    "imagePath": "assets/images/words/17.png",
+    "firstLetter": "i",
+    "restOfWord": "nk"
+  },
 ];
