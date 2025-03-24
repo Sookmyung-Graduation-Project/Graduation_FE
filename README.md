@@ -2,6 +2,33 @@
 
 Subproject for the graduation project
 
+## Index
+
+- [Getting Started](#getting-started)
+- [Project Structure](#project-structure)
+- [GIF](#gif)
+
+## Project Structure
+
+```bash
+lib/
+├── data
+│   └── word_data.dart
+├── main.dart
+├── screens
+│   ├── custom_progress_bar.dart
+│   ├── lesson_screen.dart
+│   ├── phonics_home.dart
+│   ├── phonics_screen.dart
+│   └── quiz_screen.dart
+└── widgets
+    ├── basic_lg_button.dart
+    ├── draggable_widget.dart
+    ├── phonics_button.dart
+    ├── phonics_word_widget.dart
+    └── quiz_button.dart
+```
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
@@ -21,4 +48,3 @@ samples, guidance on mobile development, and a full API reference.
   <img src="https://github.com/user-attachments/assets/1b0c763d-879b-47cf-8cd7-7b8fd178cd42" width="200">
   <img src="https://github.com/user-attachments/assets/cfed5f0e-deca-486c-ad63-3703eb87784b" width="200">
 </p>
-
