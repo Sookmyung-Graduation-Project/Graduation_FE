@@ -15,11 +15,10 @@ For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 
-## GIF
+## GIF
 <p align="center">
   <img src="https://github.com/user-attachments/assets/f2dec122-9369-4403-8066-01af3b3c7454" width="200">
   <img src="https://github.com/user-attachments/assets/1b0c763d-879b-47cf-8cd7-7b8fd178cd42" width="200">
   <img src="https://github.com/user-attachments/assets/cfed5f0e-deca-486c-ad63-3703eb87784b" width="200">
 </p>
-
 
