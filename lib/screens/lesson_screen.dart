@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'custom_progress_bar.dart'; // 공룡 ProgressBar Import
-import '../widgets/basic_lg_button.dart';
-import '../widgets/draggable_widget.dart'; // 새로운 위젯 import
-import '../widgets/phonics_word_widget.dart';
+import 'custom_progress_bar.dart'; // 공룡 ProgressBar import
+import '../widgets/basic_lg_button.dart'; // 진행 버튼 import
+import '../widgets/draggable_widget.dart'; // draggable 위젯 import
+import '../widgets/phonics_word_widget.dart'; // scale transition 되는 <이미지, text> 위젯 import
+import '../data/word_data.dart'; // 단어 데이터 파일 import
 
 class LessonScreen extends StatefulWidget {
   final int lessonNumber;
@@ -16,18 +17,18 @@ class LessonScreen extends StatefulWidget {
 class _LessonScreenState extends State<LessonScreen> {
   double progress = 0.0; // 진행도 상태
   Offset draggablePosition = const Offset(100, 100); // 기본 드래그 위치
-  bool _isDraggableVisible = true; // 드래그 가능한 위젯의 가시성 상태
+  bool _isDraggableVisible = true;
   bool _isButtonLgVisible = false;
-  bool _isPhonicsWordVisible = false; //파닉스 이미지, text 그림 visible 상태
+  bool _isPhonicsWordVisible = false;
+  int _currentWordIndex = 0; // 🔹 현재 표시할 단어 인덱스 추가
 
   /// progress bar 진행도 증가
   void _updateProgress() {
     setState(() {
-      progress += 0.07; // 1단계당 15, step 0.066667 반올림
-      if (progress > 1.0) progress = 1.0; // 최대 100%
+      progress += 0.07;
+      if (progress > 1.0) progress = 1.0;
     });
 
-    // 500ms(0.5초) 후에 버튼 숨기기
     Future.delayed(const Duration(milliseconds: 500), () {
       if (mounted) {
         setState(() {
@@ -44,7 +45,6 @@ class _LessonScreenState extends State<LessonScreen> {
       draggablePosition = position;
     });
 
-    /// 800ms 후에 DraggableContainer 숨기고 버튼 표시
     Future.delayed(const Duration(milliseconds: 800), () {
       if (mounted) {
         setState(() {
@@ -56,24 +56,26 @@ class _LessonScreenState extends State<LessonScreen> {
     });
   }
 
-  ///scale transition 후 disvisible
+  /// scale transition 후 다음 단어로 변경
   void _afterTransition() {
     Future.delayed(const Duration(milliseconds: 500), () {
       setState(() {
         _isPhonicsWordVisible = false;
         _isButtonLgVisible = true;
+        _currentWordIndex =
+            (_currentWordIndex + 1) % phonicsWords.length; // 다음 단어로 변경
       });
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final word = phonicsWords[_currentWordIndex]; //현재 단어 가져오기
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xffFFFFEB),
-        title: Text(
-          "Phonics level ${widget.lessonNumber} Content",
-        ),
+        title: Text("Phonics level ${widget.lessonNumber} Content"),
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -94,37 +96,29 @@ class _LessonScreenState extends State<LessonScreen> {
                 child: Row(
                   children: [
                     const SizedBox(width: 10),
-                    Expanded(
-                        child:
-                            DinosaurProgressBar(progress: progress)), // 상태 반영
+                    Expanded(child: DinosaurProgressBar(progress: progress)),
                   ],
                 ),
               ),
               if (_isPhonicsWordVisible)
                 Padding(
-                  padding: const EdgeInsets.only(
-                    top: 50,
-                  ),
+                  padding: const EdgeInsets.only(top: 50),
                   child: PhonicsWordWidget(
-                    imagePath: 'assets/images/1.png',
-                    firstLetter: 'A',
-                    restOfWord: 'pple',
-                    onFinished: _afterTransition,
+                    imagePath: word["imagePath"]!,
+                    firstLetter: word["firstLetter"]!,
+                    restOfWord: word["restOfWord"]!,
+                    onFinished: _afterTransition, // 🔹 단어 변경 콜백
                   ),
                 ),
-              const Expanded(
-                child: Center(),
-              ),
+              const Expanded(child: Center()),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 child: _isButtonLgVisible
-                    ? BasicLgButton(
-                        onPressed: _updateProgress) // 버튼이 눌리면 진행도 증가
+                    ? BasicLgButton(onPressed: _updateProgress)
                     : const SizedBox(),
               ),
             ],
           ),
-          // 드래그 가능한 컨테이너 추가
           if (_isDraggableVisible) DraggableContainer(onDragEnd: _onDragEnd),
         ],
       ),
