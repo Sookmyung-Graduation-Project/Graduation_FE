@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'custom_progress_bar.dart'; // 공룡 ProgressBar import
-import '../widgets/basic_lg_button.dart'; // 진행 버튼 import
-import '../widgets/draggable_widget.dart'; // draggable 위젯 import
-import '../widgets/phonics_word_widget.dart'; // scale transition 되는 <이미지, text> 위젯 import
-import '../data/word_data.dart'; // 단어 데이터 파일 import
+import 'custom_progress_bar.dart';
+import '../widgets/basic_lg_button.dart';
+import '../widgets/draggable_widget.dart';
+import '../widgets/phonics_word_widget.dart';
+import '../data/word_data.dart';
 
 class LessonScreen extends StatefulWidget {
   final int lessonNumber;
@@ -15,17 +15,17 @@ class LessonScreen extends StatefulWidget {
 }
 
 class _LessonScreenState extends State<LessonScreen> {
-  double progress = 0.0; // 진행도 상태
-  Offset draggablePosition = const Offset(100, 100); // 기본 드래그 위치
+  double progress = 0.0;
+  Offset draggablePosition = const Offset(100, 100);
   bool _isDraggableVisible = true;
   bool _isButtonLgVisible = false;
   bool _isPhonicsWordVisible = false;
-  int _currentWordIndex = 0; // 🔹 현재 표시할 단어 인덱스 추가
+  int _currentGroupIndex = 0;
+  int _currentWordInGroupIndex = 0;
 
-  /// progress bar 진행도 증가
   void _updateProgress() {
     setState(() {
-      progress += 0.07;
+      progress += 0.1;
       if (progress > 1.0) progress = 1.0;
     });
 
@@ -39,7 +39,6 @@ class _LessonScreenState extends State<LessonScreen> {
     });
   }
 
-  /// 드래그 종료 시 위치 업데이트
   void _onDragEnd(Offset position) {
     setState(() {
       draggablePosition = position;
@@ -56,21 +55,39 @@ class _LessonScreenState extends State<LessonScreen> {
     });
   }
 
-  /// scale transition 후 다음 단어로 변경
   void _afterTransition() {
     Future.delayed(const Duration(milliseconds: 500), () {
       setState(() {
         _isPhonicsWordVisible = false;
         _isButtonLgVisible = true;
-        _currentWordIndex =
-            (_currentWordIndex + 1) % phonicsWords.length; // 다음 단어로 변경
+
+        if (_currentWordInGroupIndex == 0) {
+          _currentWordInGroupIndex = 1;
+        } else {
+          _currentWordInGroupIndex = 0;
+          _currentGroupIndex += 1;
+          _isDraggableVisible = true;
+        }
       });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final word = phonicsWords[_currentWordIndex]; //현재 단어 가져오기
+    if (_currentGroupIndex >= groupedPhonicsWords.length) {
+      return const Scaffold(
+        backgroundColor: Color(0xffFFFFEB),
+        body: Center(
+          child: Text(
+            "Great job! You've completed the lesson!",
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+        ),
+      );
+    }
+
+    final currentGroup = groupedPhonicsWords[_currentGroupIndex];
+    final currentWord = currentGroup["words"][_currentWordInGroupIndex];
 
     return Scaffold(
       appBar: AppBar(
@@ -104,10 +121,10 @@ class _LessonScreenState extends State<LessonScreen> {
                 Padding(
                   padding: const EdgeInsets.only(top: 50),
                   child: PhonicsWordWidget(
-                    imagePath: word["imagePath"]!,
-                    firstLetter: word["firstLetter"]!,
-                    restOfWord: word["restOfWord"]!,
-                    onFinished: _afterTransition, // 🔹 단어 변경 콜백
+                    imagePath: currentWord["imagePath"] ?? '',
+                    firstLetter: currentWord["firstLetter"] ?? '',
+                    restOfWord: currentWord["restOfWord"] ?? '',
+                    onFinished: _afterTransition,
                   ),
                 ),
               const Expanded(child: Center()),
@@ -119,7 +136,12 @@ class _LessonScreenState extends State<LessonScreen> {
               ),
             ],
           ),
-          if (_isDraggableVisible) DraggableContainer(onDragEnd: _onDragEnd),
+          if (_isDraggableVisible)
+            DraggableContainer(
+              text:
+                  '${currentWord["firstLetter"]}${currentWord["firstSmallLetter"]}',
+              onDragEnd: _onDragEnd,
+            ),
         ],
       ),
     );

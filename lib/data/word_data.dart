@@ -1,87 +1,149 @@
-final List<Map<String, String>> phonicsWords = [
+final List<Map<String, dynamic>> groupedPhonicsWords = [
   {
-    "imagePath": "assets/images/words/1.png",
-    "firstLetter": "A",
-    "restOfWord": "pple"
+    "letter": "A",
+    "words": [
+      {
+        "imagePath": "assets/images/words/1.png",
+        "firstLetter": "A",
+        "firstSmallLetter": "a",
+        "restOfWord": "pple"
+      },
+      {
+        "imagePath": "assets/images/words/2.png",
+        "firstLetter": "A",
+        "firstSmallLetter": "a",
+        "restOfWord": "irplane"
+      },
+    ]
   },
   {
-    "imagePath": "assets/images/words/2.png",
-    "firstLetter": "A",
-    "restOfWord": "irplane"
+    "letter": "B",
+    "words": [
+      {
+        "imagePath": "assets/images/words/3.png",
+        "firstLetter": "B",
+        "firstSmallLetter": "b",
+        "restOfWord": "us"
+      },
+      {
+        "imagePath": "assets/images/words/4.png",
+        "firstLetter": "B",
+        "firstSmallLetter": "b",
+        "restOfWord": "ag"
+      },
+    ]
   },
   {
-    "imagePath": "assets/images/words/3.png",
-    "firstLetter": "B",
-    "restOfWord": "us"
+    "letter": "C",
+    "words": [
+      {
+        "imagePath": "assets/images/words/5.png",
+        "firstLetter": "C",
+        "firstSmallLetter": "c",
+        "restOfWord": "up"
+      },
+      {
+        "imagePath": "assets/images/words/6.png",
+        "firstLetter": "C",
+        "firstSmallLetter": "c",
+        "restOfWord": "ap"
+      },
+    ]
   },
   {
-    "imagePath": "assets/images/words/4.png",
-    "firstLetter": "B",
-    "restOfWord": "ag"
+    "letter": "D",
+    "words": [
+      {
+        "imagePath": "assets/images/words/7.png",
+        "firstLetter": "D",
+        "firstSmallLetter": "d",
+        "restOfWord": "uck"
+      },
+      {
+        "imagePath": "assets/images/words/8.png",
+        "firstLetter": "D",
+        "firstSmallLetter": "d",
+        "restOfWord": "oll"
+      },
+    ]
   },
   {
-    "imagePath": "assets/images/words/5.png",
-    "firstLetter": "C",
-    "restOfWord": "up"
+    "letter": "E",
+    "words": [
+      {
+        "imagePath": "assets/images/words/9.png",
+        "firstLetter": "E",
+        "firstSmallLetter": "e",
+        "restOfWord": "gg"
+      },
+      {
+        "imagePath": "assets/images/words/10.png",
+        "firstLetter": "E",
+        "firstSmallLetter": "e",
+        "restOfWord": "lephant"
+      },
+    ]
   },
   {
-    "imagePath": "assets/images/words/6.png",
-    "firstLetter": "C",
-    "restOfWord": "ap"
+    "letter": "F",
+    "words": [
+      {
+        "imagePath": "assets/images/words/11.png",
+        "firstLetter": "F",
+        "firstSmallLetter": "f",
+        "restOfWord": "an"
+      },
+      {
+        "imagePath": "assets/images/words/12.png",
+        "firstLetter": "F",
+        "firstSmallLetter": "f",
+        "restOfWord": "ish"
+      },
+    ]
   },
   {
-    "imagePath": "assets/images/words/7.png",
-    "firstLetter": "D",
-    "restOfWord": "uck"
+    "letter": "G",
+    "words": [
+      {
+        "imagePath": "assets/images/words/13.png",
+        "firstLetter": "G",
+        "firstSmallLetter": "g",
+        "restOfWord": "oat"
+      },
+      {
+        "imagePath": "assets/images/words/14.png",
+        "firstLetter": "G",
+        "firstSmallLetter": "g",
+        "restOfWord": "rape"
+      },
+    ]
   },
   {
-    "imagePath": "assets/images/words/8.png",
-    "firstLetter": "D",
-    "restOfWord": "oll"
+    "letter": "H",
+    "words": [
+      {
+        "imagePath": "assets/images/words/15.png",
+        "firstLetter": "H",
+        "firstSmallLetter": "h",
+        "restOfWord": "at"
+      },
+      {
+        "imagePath": "assets/images/words/16.png",
+        "firstLetter": "H",
+        "firstSmallLetter": "h",
+        "restOfWord": "en"
+      },
+    ]
   },
   {
-    "imagePath": "assets/images/words/9.png",
-    "firstLetter": "E",
-    "restOfWord": "gg"
-  },
-  {
-    "imagePath": "assets/images/words/10.png",
-    "firstLetter": "E",
-    "restOfWord": "lephant"
-  },
-  {
-    "imagePath": "assets/images/words/11.png",
-    "firstLetter": "f",
-    "restOfWord": "an"
-  },
-  {
-    "imagePath": "assets/images/words/12.png",
-    "firstLetter": "f",
-    "restOfWord": "ish"
-  },
-  {
-    "imagePath": "assets/images/words/13.png",
-    "firstLetter": "g",
-    "restOfWord": "oat"
-  },
-  {
-    "imagePath": "assets/images/words/14.png",
-    "firstLetter": "g",
-    "restOfWord": "rape"
-  },
-  {
-    "imagePath": "assets/images/words/15.png",
-    "firstLetter": "h",
-    "restOfWord": "at"
-  },
-  {
-    "imagePath": "assets/images/words/16.png",
-    "firstLetter": "h",
-    "restOfWord": "en"
-  },
-  {
-    "imagePath": "assets/images/words/17.png",
-    "firstLetter": "i",
-    "restOfWord": "nk"
+    "letter": "I",
+    "words": [
+      {
+        "imagePath": "assets/images/words/17.png",
+        "firstLetter": "I",
+        "firstSmallLetter": "i",
+        "restOfWord": "nk"
+      },
+    ]
   },
 ];
