@@ -1,0 +1,58 @@
+final List<Map<String, dynamic>> quizData = [
+  {
+    'image': 'assets/images/words/apple.png',
+    'word': 'apple',
+    'correctAnswer': 'a',
+    'missingIndex': 0,
+    'choices': ['i', 'a', 'e', 'u'],
+  },
+  {
+    'image': 'assets/images/words/airplane.png',
+    'word': 'airplane',
+    'correctAnswer': 'a',
+    'missingIndex': 0,
+    'choices': ['i', 'a', 'e', 'u'],
+  },
+  {
+    'image': 'assets/images/words/bag.png',
+    'word': 'bag',
+    'correctAnswer': 'b',
+    'missingIndex': 0,
+    'choices': ['a', 'b', 'f', 'g'],
+  },
+  {
+    'image': 'assets/images/words/bus.png',
+    'word': 'bus',
+    'correctAnswer': 'b',
+    'missingIndex': 0,
+    'choices': ['a', 'b', 'f', 'g'],
+  },
+  {
+    'image': 'assets/images/words/cap.png',
+    'word': 'cap',
+    'correctAnswer': 'c',
+    'missingIndex': 0,
+    'choices': ['c', 'f', 'k', 't'],
+  },
+  {
+    'image': 'assets/images/words/cup.png',
+    'word': 'cup',
+    'correctAnswer': 'c',
+    'missingIndex': 0,
+    'choices': ['c', 'f', 'k', 't'],
+  },
+  {
+    'image': 'assets/images/words/doll.png',
+    'word': 'doll',
+    'correctAnswer': 'd',
+    'missingIndex': 0,
+    'choices': ['d', 'b', 'k', 'w'],
+  },
+  {
+    'image': 'assets/images/words/duck.png',
+    'word': 'duck',
+    'correctAnswer': 'd',
+    'missingIndex': 0,
+    'choices': ['b', 'f', 'd', 'k'],
+  },
+];

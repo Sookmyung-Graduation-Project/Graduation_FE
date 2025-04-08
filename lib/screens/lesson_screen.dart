@@ -126,7 +126,6 @@ class _LessonScreenState extends State<LessonScreen> {
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
                 child: Row(
                   children: [
-                    const SizedBox(width: 10),
                     Expanded(child: DinosaurProgressBar(progress: progress)),
                   ],
                 ),

@@ -3,13 +3,13 @@ final List<Map<String, dynamic>> groupedPhonicsWords = [
     "letter": "A",
     "words": [
       {
-        "imagePath": "assets/images/words/1.png",
+        "imagePath": "assets/images/words/apple.png",
         "firstLetter": "A",
         "firstSmallLetter": "a",
         "restOfWord": "pple"
       },
       {
-        "imagePath": "assets/images/words/2.png",
+        "imagePath": "assets/images/words/airplane.png",
         "firstLetter": "A",
         "firstSmallLetter": "a",
         "restOfWord": "irplane"
@@ -20,13 +20,13 @@ final List<Map<String, dynamic>> groupedPhonicsWords = [
     "letter": "B",
     "words": [
       {
-        "imagePath": "assets/images/words/3.png",
+        "imagePath": "assets/images/words/bus.png",
         "firstLetter": "B",
         "firstSmallLetter": "b",
         "restOfWord": "us"
       },
       {
-        "imagePath": "assets/images/words/4.png",
+        "imagePath": "assets/images/words/bag.png",
         "firstLetter": "B",
         "firstSmallLetter": "b",
         "restOfWord": "ag"
@@ -37,13 +37,13 @@ final List<Map<String, dynamic>> groupedPhonicsWords = [
     "letter": "C",
     "words": [
       {
-        "imagePath": "assets/images/words/5.png",
+        "imagePath": "assets/images/words/cup.png",
         "firstLetter": "C",
         "firstSmallLetter": "c",
         "restOfWord": "up"
       },
       {
-        "imagePath": "assets/images/words/6.png",
+        "imagePath": "assets/images/words/cap.png",
         "firstLetter": "C",
         "firstSmallLetter": "c",
         "restOfWord": "ap"
@@ -54,13 +54,13 @@ final List<Map<String, dynamic>> groupedPhonicsWords = [
     "letter": "D",
     "words": [
       {
-        "imagePath": "assets/images/words/7.png",
+        "imagePath": "assets/images/words/duck.png",
         "firstLetter": "D",
         "firstSmallLetter": "d",
         "restOfWord": "uck"
       },
       {
-        "imagePath": "assets/images/words/8.png",
+        "imagePath": "assets/images/words/doll.png",
         "firstLetter": "D",
         "firstSmallLetter": "d",
         "restOfWord": "oll"
@@ -71,13 +71,13 @@ final List<Map<String, dynamic>> groupedPhonicsWords = [
     "letter": "E",
     "words": [
       {
-        "imagePath": "assets/images/words/9.png",
+        "imagePath": "assets/images/words/egg.png",
         "firstLetter": "E",
         "firstSmallLetter": "e",
         "restOfWord": "gg"
       },
       {
-        "imagePath": "assets/images/words/10.png",
+        "imagePath": "assets/images/words/elephant.png",
         "firstLetter": "E",
         "firstSmallLetter": "e",
         "restOfWord": "lephant"
@@ -88,13 +88,13 @@ final List<Map<String, dynamic>> groupedPhonicsWords = [
     "letter": "F",
     "words": [
       {
-        "imagePath": "assets/images/words/11.png",
+        "imagePath": "assets/images/words/fan.png",
         "firstLetter": "F",
         "firstSmallLetter": "f",
         "restOfWord": "an"
       },
       {
-        "imagePath": "assets/images/words/12.png",
+        "imagePath": "assets/images/words/fish.png",
         "firstLetter": "F",
         "firstSmallLetter": "f",
         "restOfWord": "ish"
@@ -105,13 +105,13 @@ final List<Map<String, dynamic>> groupedPhonicsWords = [
     "letter": "G",
     "words": [
       {
-        "imagePath": "assets/images/words/13.png",
+        "imagePath": "assets/images/words/goat.png",
         "firstLetter": "G",
         "firstSmallLetter": "g",
         "restOfWord": "oat"
       },
       {
-        "imagePath": "assets/images/words/14.png",
+        "imagePath": "assets/images/words/grape.png",
         "firstLetter": "G",
         "firstSmallLetter": "g",
         "restOfWord": "rape"
@@ -122,13 +122,13 @@ final List<Map<String, dynamic>> groupedPhonicsWords = [
     "letter": "H",
     "words": [
       {
-        "imagePath": "assets/images/words/15.png",
+        "imagePath": "assets/images/words/hat.png",
         "firstLetter": "H",
         "firstSmallLetter": "h",
         "restOfWord": "at"
       },
       {
-        "imagePath": "assets/images/words/16.png",
+        "imagePath": "assets/images/words/hen.png",
         "firstLetter": "H",
         "firstSmallLetter": "h",
         "restOfWord": "en"
@@ -139,13 +139,13 @@ final List<Map<String, dynamic>> groupedPhonicsWords = [
     "letter": "I",
     "words": [
       {
-        "imagePath": "assets/images/words/17.png",
+        "imagePath": "assets/images/words/ink.png",
         "firstLetter": "I",
         "firstSmallLetter": "i",
         "restOfWord": "nk"
       },
       {
-        "imagePath": "assets/images/words/17.png",
+        "imagePath": "assets/images/words/igloo.png",
         "firstLetter": "I",
         "firstSmallLetter": "i",
         "restOfWord": "gloo"

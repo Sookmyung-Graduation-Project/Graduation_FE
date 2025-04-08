@@ -7,7 +7,10 @@ class DinosaurProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double barWidth = 320; // 프로그레스 바의 너비
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
+    double barWidth = screenWidth * 0.88888888888; // 프로그레스 바의 너비
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -20,7 +23,7 @@ class DinosaurProgressBar extends StatelessWidget {
               // 프로그레스 바 배경
               Container(
                 width: barWidth,
-                height: 33,
+                height: screenHeight * 0.03841676367,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
