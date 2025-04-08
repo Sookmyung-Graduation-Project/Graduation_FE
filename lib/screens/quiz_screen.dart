@@ -28,18 +28,38 @@ class QuizScreen extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      backgroundColor: const Color(0xffFFFFEB),
       appBar: AppBar(
         title: const Text("Quiz Screen"),
-        backgroundColor: const Color(0xffb7c0f9),
+        backgroundColor: Colors.white,
       ),
-      body: const Center(
-        child: Text("퀴즈 내용이 여기에 들어갑니다."),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showLessonCompleteDialog(context, screenWidth, screenHeight);
-        },
-        child: const Icon(Icons.check),
+      body: Center(
+        child: Column(
+          children: [
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                Image.asset(
+                  'assets/images/words/Union.png',
+                  height: screenHeight * 0.12,
+                ),
+                Positioned(
+                  child: Padding(
+                    padding:
+                        EdgeInsets.only(bottom: screenHeight * 0.01164144353),
+                    child: const Text(
+                      'what is the missing letter?',
+                      style: TextStyle(
+                        color: Color(0xff363535),
+                        fontSize: 26,
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

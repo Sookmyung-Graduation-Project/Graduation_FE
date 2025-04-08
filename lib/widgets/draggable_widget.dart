@@ -135,10 +135,10 @@ class _DraggableContainerState extends State<DraggableContainer>
         borderRadius: BorderRadius.circular(10),
         boxShadow: const [
           BoxShadow(
-            color: Colors.grey,
+            color: Color(0xFFC8C7B5),
             spreadRadius: 1,
-            blurRadius: 3,
-            offset: Offset(1, 1),
+            blurRadius: 0,
+            offset: Offset(2, 2),
           )
         ],
       ),

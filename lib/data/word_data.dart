@@ -144,6 +144,12 @@ final List<Map<String, dynamic>> groupedPhonicsWords = [
         "firstSmallLetter": "i",
         "restOfWord": "nk"
       },
+      {
+        "imagePath": "assets/images/words/17.png",
+        "firstLetter": "I",
+        "firstSmallLetter": "i",
+        "restOfWord": "gloo"
+      },
     ]
   },
 ];
