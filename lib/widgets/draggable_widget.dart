@@ -4,11 +4,15 @@ import 'package:flutter/material.dart';
 class DraggableContainer extends StatefulWidget {
   final Function(Offset) onDragEnd;
   final String text;
+  final double screenWidth;
+  final double screenHeight;
 
   const DraggableContainer({
     super.key,
     required this.onDragEnd,
     required this.text,
+    required this.screenWidth,
+    required this.screenHeight,
   });
 
   @override
@@ -123,8 +127,8 @@ class _DraggableContainerState extends State<DraggableContainer>
   Widget _buildLetterCard(String letter, Color borderColor,
       {Color? textColor}) {
     return Container(
-      width: 200,
-      height: 150,
+      width: widget.screenWidth * 0.55555555555,
+      height: widget.screenHeight * 0.17462165308,
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border.all(color: borderColor, width: 3),

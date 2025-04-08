@@ -4,6 +4,7 @@ import '../widgets/basic_lg_button.dart';
 import '../widgets/draggable_widget.dart';
 import '../widgets/phonics_word_widget.dart';
 import '../data/word_data.dart';
+import '../widgets/LessonCompleteCard.dart';
 
 class LessonScreen extends StatefulWidget {
   final int lessonNumber;
@@ -56,17 +57,21 @@ class _LessonScreenState extends State<LessonScreen> {
   }
 
   void _afterTransition() {
-    Future.delayed(const Duration(milliseconds: 500), () {
+    Future.delayed(const Duration(milliseconds: 800), () {
       setState(() {
         _isPhonicsWordVisible = false;
-        _isButtonLgVisible = true;
 
         if (_currentWordInGroupIndex == 0) {
+          //A -> apple[0], airplane[1]
           _currentWordInGroupIndex = 1;
+          _isButtonLgVisible = true;
         } else {
           _currentWordInGroupIndex = 0;
           _currentGroupIndex += 1;
+
+          // 다음 그룹 시작: 드래그 다시 등장
           _isDraggableVisible = true;
+          _isButtonLgVisible = false;
         }
       });
     });
@@ -74,14 +79,23 @@ class _LessonScreenState extends State<LessonScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_currentGroupIndex >= groupedPhonicsWords.length) {
-      return const Scaffold(
-        backgroundColor: Color(0xffFFFFEB),
-        body: Center(
-          child: Text(
-            "Great job! You've completed the lesson!",
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    if (_currentGroupIndex >= 4) {
+      return Scaffold(
+        backgroundColor: const Color(0xffFFFFEB),
+        body: Stack(
+          children: [
+            Container(
+              color: Colors.black.withOpacity(0.3), // 반투명 블랙 배경
+            ),
+            Center(
+              child: LessonCompleteCard(
+                screenHeight: screenHeight,
+                screenWidth: screenWidth,
+              ),
+            ),
+          ],
         ),
       );
     }
@@ -95,7 +109,7 @@ class _LessonScreenState extends State<LessonScreen> {
         title: Text("Phonics level ${widget.lessonNumber} Content"),
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pop(context); //뒤로 가기
           },
           color: const Color(0xff7C7B73),
           icon: const Icon(Icons.arrow_back),
@@ -141,6 +155,8 @@ class _LessonScreenState extends State<LessonScreen> {
               text:
                   '${currentWord["firstLetter"]}${currentWord["firstSmallLetter"]}',
               onDragEnd: _onDragEnd,
+              screenWidth: screenWidth,
+              screenHeight: screenHeight,
             ),
         ],
       ),
