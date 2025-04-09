@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'custom_progress_bar.dart';
+import '../widgets/custom_progress_bar.dart';
 import '../widgets/basic_lg_button.dart';
 import '../widgets/draggable_widget.dart';
 import '../widgets/phonics_word_widget.dart';

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:phonics/widgets/basic_lg_button.dart';
+import 'package:flutter/services.dart';
+import '../widgets/basic_lg_button.dart';
 import '../widgets/LessonCompleteCard.dart';
 import '../widgets/quiz_select_container.dart';
-import 'custom_progress_bar.dart';
-import 'dart:ui';
+import '../widgets/custom_progress_bar.dart';
 import '../data/quizData.dart';
-import 'package:flutter/services.dart';
 
 class QuizScreen extends StatefulWidget {
   const QuizScreen({super.key});
@@ -21,31 +20,6 @@ class _QuizScreenState extends State<QuizScreen> {
   String? selectedChoice;
   bool isCorrectAnswerSelected = false;
 
-  void _updateProgress() {
-    setState(() {
-      progress += 0.1;
-      if (progress > 1.0) progress = 1.0;
-    });
-  }
-
-  void goToNextQuiz() {
-    if (currentQuestionIndex == quizData.length - 1) {
-      Future.delayed(const Duration(milliseconds: 300), () {
-        showLessonCompleteDialog(
-          context,
-          MediaQuery.of(context).size.width,
-          MediaQuery.of(context).size.height,
-        );
-      });
-    } else {
-      setState(() {
-        currentQuestionIndex++;
-        progress += 1 / quizData.length;
-        isAnswered = false;
-      });
-    }
-  }
-
   void handleAnswer(String selected) {
     final correct = quizData[currentQuestionIndex]['correctAnswer'];
 
@@ -58,6 +32,9 @@ class _QuizScreenState extends State<QuizScreen> {
     if (selected == correct) {
       Future.delayed(const Duration(seconds: 1), () {
         if (currentQuestionIndex == quizData.length - 1) {
+          setState(() {
+            progress = 1.0;
+          });
           showLessonCompleteDialog(
             context,
             MediaQuery.of(context).size.width,
@@ -66,7 +43,7 @@ class _QuizScreenState extends State<QuizScreen> {
         } else {
           setState(() {
             currentQuestionIndex++;
-            progress += 1 / quizData.length;
+            progress += 1.0 / quizData.length;
             isAnswered = false;
             selectedChoice = null;
             isCorrectAnswerSelected = false;
@@ -74,7 +51,7 @@ class _QuizScreenState extends State<QuizScreen> {
         }
       });
     } else {
-      // 오답이면 다시 선택 가능 상태로
+      HapticFeedback.heavyImpact();
       Future.delayed(const Duration(seconds: 1), () {
         setState(() {
           isAnswered = false;
@@ -82,8 +59,6 @@ class _QuizScreenState extends State<QuizScreen> {
           isCorrectAnswerSelected = false;
         });
       });
-
-      HapticFeedback.heavyImpact();
     }
   }
 
@@ -114,13 +89,13 @@ class _QuizScreenState extends State<QuizScreen> {
     final String? word = currentQuiz['word'];
     final String? correct = currentQuiz['correctAnswer'];
     final int? missingIndex = currentQuiz['missingIndex'];
+
     return Scaffold(
       backgroundColor: const Color(0xffFFFFEB),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            // Progress bar
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
               child: Row(
@@ -129,8 +104,6 @@ class _QuizScreenState extends State<QuizScreen> {
                 ],
               ),
             ),
-
-            // 말풍선
             Stack(
               alignment: Alignment.center,
               children: [
@@ -150,37 +123,43 @@ class _QuizScreenState extends State<QuizScreen> {
                 ),
               ],
             ),
-
-            // 퀴즈 이미지
             Image.asset(
               currentQuiz['image'],
               width: screenWidth * 0.5,
             ),
-            // 퀴즈 단어 표시
-            // 퀴즈 단어 표시
             Text.rich(
               (word != null &&
                       missingIndex != null &&
                       missingIndex >= 0 &&
                       missingIndex < word.length)
-                  ? (isAnswered
+                  ? (isAnswered && selectedChoice == correct
                       ? TextSpan(
-                          text: word, // 정답 맞춘 전체 단어
+                          text: word,
                           style: const TextStyle(
                             fontSize: 40,
                             fontWeight: FontWeight.bold,
                             color: Color(0xff2FAF8A),
                           ),
                         )
-                      : TextSpan(
-                          text: word.replaceRange(
-                              missingIndex, missingIndex + 1, '_'),
-                          style: const TextStyle(
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ))
+                      : isAnswered && selectedChoice != correct
+                          ? TextSpan(
+                              text: word.replaceRange(missingIndex,
+                                  missingIndex + 1, selectedChoice!),
+                              style: const TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red,
+                              ),
+                            )
+                          : TextSpan(
+                              text: word.replaceRange(
+                                  missingIndex, missingIndex + 1, '_'),
+                              style: const TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ))
                   : const TextSpan(
                       text: '_____',
                       style: TextStyle(
@@ -189,7 +168,6 @@ class _QuizScreenState extends State<QuizScreen> {
                       ),
                     ),
             ),
-            // 선택지
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
               child: Wrap(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/phonics_home.dart';
+import 'screens/study_tab.dart';
 
 void main() {
   runApp(const MyApp());
