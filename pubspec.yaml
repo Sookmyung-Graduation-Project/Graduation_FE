@@ -63,6 +63,7 @@ flutter:
   assets:
     - assets/images/
     - assets/images/words/
+    - assets/navigation_icons/
     
 
   #   - images/a_dot_ham.jpeg

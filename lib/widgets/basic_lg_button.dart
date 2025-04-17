@@ -14,6 +14,9 @@ class _BasicLgButtonState extends State<BasicLgButton> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return GestureDetector(
       onTapDown: (_) {
         setState(() {
@@ -38,8 +41,8 @@ class _BasicLgButtonState extends State<BasicLgButton> {
           transform: _isPressed
               ? Matrix4.translationValues(0, 4, 0)
               : Matrix4.identity(),
-          width: 331,
-          height: 55,
+          width: screenWidth * 0.91944444444,
+          height: screenHeight * 0.06402793946,
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 100),
           decoration: BoxDecoration(
             color: const Color(0xffFAC632),

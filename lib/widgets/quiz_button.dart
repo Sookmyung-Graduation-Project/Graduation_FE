@@ -9,6 +9,8 @@ class QuizButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     return _buildButton(
       imageAsset: 'assets/images/start_quiz_button_logo.png',
       color: const Color(0xffb7c0f9),
