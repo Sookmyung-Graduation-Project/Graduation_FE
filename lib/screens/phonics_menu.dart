@@ -8,12 +8,13 @@ class PhonicsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       body: Stack(
         children: [
           ListView(
-            physics: const BouncingScrollPhysics(),
             children: [
               Container(
                 decoration: const BoxDecoration(
@@ -62,29 +63,30 @@ class PhonicsScreen extends StatelessWidget {
               ),
             ],
           ),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(50),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.6),
-                        shape: BoxShape.circle,
-                      ),
-                      child: IconButton(
-                        icon: const Icon(
-                          Icons.arrow_back_rounded,
-                          color: Color(0xff7C7B73),
-                        ),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
-                    ),
+          Positioned(
+            left: screenWidth * 0.055,
+            top: screenWidth * 0.055,
+            child: SafeArea(
+              child: Container(
+                width: screenWidth * 0.1,
+                height: screenWidth * 0.1,
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        offset: const Offset(0, 2),
+                        color: Colors.black.withOpacity(0.3),
+                      )
+                    ]),
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.arrow_back_rounded,
+                    size: 25,
                   ),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/home');
+                  },
                 ),
               ),
             ),
