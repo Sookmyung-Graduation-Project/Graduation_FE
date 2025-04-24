@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:phonics/screens/study_tab/quiz_detailmenu.dart';
-import 'package:phonics/screens/study_tab/quiz_screen.dart';
 
 class QuizMenuContainer extends StatefulWidget {
   final VoidCallback onTap;

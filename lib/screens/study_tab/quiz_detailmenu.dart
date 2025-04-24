@@ -1,8 +1,6 @@
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'lesson_screen.dart';
-import '../../widgets/quiz_menu_container.dart'; // LessonScreen import
+// LessonScreen import
 import '../../widgets/quiz_detailmenu_container.dart';
 
 class QuizDetailmenu extends StatelessWidget {
