@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../widgets/basic_lg_button.dart';
-import '../widgets/LessonCompleteCard.dart';
-import '../widgets/quiz_select_container.dart';
-import '../widgets/custom_progress_bar.dart';
-import '../data/quiz_data.dart';
+import '../../widgets/basic_lg_button.dart';
+import '../../widgets/LessonCompleteCard.dart';
+import '../../widgets/quiz_select_container.dart';
+import '../../widgets/custom_progress_bar.dart';
+import '../../data/quiz_data.dart';
 
 class QuizScreen extends StatefulWidget {
   const QuizScreen({super.key});

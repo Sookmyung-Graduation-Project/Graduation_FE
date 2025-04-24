@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:phonics/screens/quiz_menu.dart';
-import 'package:phonics/screens/quiz_screen.dart';
+import 'package:phonics/screens/study_tab/quiz_menu.dart';
+import 'package:phonics/screens/study_tab/quiz_screen.dart';
 import 'draggable_widget.dart';
 import 'phonics_word_widget.dart';
 

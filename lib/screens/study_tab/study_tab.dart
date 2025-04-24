@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../widgets/phonics_button.dart';
-import '../widgets/quiz_button.dart';
+import '../../widgets/phonics_button.dart';
+import '../../widgets/quiz_button.dart';
 
 class StudyScreen extends StatefulWidget {
   const StudyScreen({super.key});

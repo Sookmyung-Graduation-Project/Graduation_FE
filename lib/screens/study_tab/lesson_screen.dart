@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import '../widgets/custom_progress_bar.dart';
-import '../widgets/basic_lg_button.dart';
-import '../widgets/draggable_widget.dart';
-import '../widgets/phonics_word_widget.dart';
-import '../data/word_data.dart';
-import '../widgets/LessonCompleteCard.dart';
+import '../../widgets/custom_progress_bar.dart';
+import '../../widgets/basic_lg_button.dart';
+import '../../widgets/draggable_widget.dart';
+import '../../widgets/phonics_word_widget.dart';
+import '../../data/word_data.dart';
+import '../../widgets/LessonCompleteCard.dart';
 
 class LessonScreen extends StatefulWidget {
   final int lessonNumber;

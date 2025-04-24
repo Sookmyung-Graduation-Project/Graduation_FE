@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:phonics/screens/phonics_menu.dart';
+import 'package:phonics/screens/study_tab/phonics_menu.dart';
 
 class PhonicsButton extends StatelessWidget {
   const PhonicsButton({super.key});

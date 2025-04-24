@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:phonics/screens/study_tab.dart';
+import 'package:phonics/screens/library_tab/home_tab_screen.dart';
+import 'package:phonics/screens/study_tab/study_tab.dart';
 import '../widgets/bottom_nav_bar.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -24,7 +25,9 @@ class _MyHomePageState extends State<MyHomePage> {
       case 0:
         page = const MyHomePage();
         break;
-
+      case 1:
+        page = const HomeTabScreen();
+        break;
       case 2:
         page = const StudyScreen();
         break;

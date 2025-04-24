@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'lesson_screen.dart';
-import '../widgets/quiz_menu_container.dart'; // LessonScreen import
+import '../../widgets/quiz_menu_container.dart'; // LessonScreen import
 
 class QuizMenu extends StatelessWidget {
   const QuizMenu({super.key});
