@@ -63,6 +63,7 @@ flutter:
   assets:
     - assets/images/
     - assets/images/words/
+    - assets/images/mypage/
     - assets/navigation_icons/
     
 

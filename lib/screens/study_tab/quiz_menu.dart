@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import '../../widgets/quiz_menu_container.dart'; // LessonScreen import
 
@@ -56,7 +55,7 @@ class QuizMenu extends StatelessWidget {
                       Text(
                         "Let's make this day productive",
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 10,
                           fontWeight: FontWeight.bold,
                           color: Color(0xffA0A09A),
                         ),

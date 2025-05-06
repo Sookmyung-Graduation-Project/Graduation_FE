@@ -75,7 +75,7 @@ class LessonCompleteCard extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Color(0xff363535),
-                      fontSize: 48,
+                      fontSize: 30,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -84,7 +84,7 @@ class LessonCompleteCard extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Color.fromARGB(255, 197, 146, 7),
-                      fontSize: 24,
+                      fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

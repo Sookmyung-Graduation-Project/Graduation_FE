@@ -106,7 +106,10 @@ class _LessonScreenState extends State<LessonScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xffFFFFEB),
-        title: Text("Phonics level ${widget.lessonNumber} Content"),
+        title: Text(
+          "Phonics level ${widget.lessonNumber} Content",
+          style: const TextStyle(fontSize: 16),
+        ),
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context); //뒤로 가기

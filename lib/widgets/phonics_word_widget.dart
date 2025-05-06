@@ -80,14 +80,14 @@ class _PhonicsWordWidgetState extends State<PhonicsWordWidget>
               Text(
                 widget.firstLetter,
                 style: const TextStyle(
-                  fontSize: 64,
+                  fontSize: 50,
                   color: Color(0xffd84040),
                   fontWeight: FontWeight.bold,
                 ),
               ),
               Text(
                 widget.restOfWord,
-                style: const TextStyle(fontSize: 64, color: Colors.black),
+                style: const TextStyle(fontSize: 50, color: Colors.black),
               ),
             ],
           ),
