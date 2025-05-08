@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:phonics/screens/mypage_tab/mypage_to_deleteaccount.dart';
+import 'package:phonics/screens/mypage_tab/mypage_to_notice.dart';
+import 'package:phonics/screens/mypage_tab/mypage_to_voicesetting.dart';
 import '../library_tab/home_tab_screen.dart';
 import '../home.dart';
 import '../study_tab/study_tab.dart';
 import '../../widgets/bottom_nav_bar.dart';
+import 'package:phonics/screens/mypage_tab/mypage_to_favoritebooks.dart';
 
 class MypageScreen extends StatefulWidget {
   const MypageScreen({super.key});
@@ -55,6 +59,9 @@ class _MypageScreenState extends State<MypageScreen>
       case 2:
         page = const StudyScreen();
         break;
+      // case 3:
+      //   page = 책만들기();
+      // break;
       case 4:
         page = const MypageScreen();
         break;
@@ -157,8 +164,26 @@ class _MypageScreenState extends State<MypageScreen>
             const Text('서비스'),
             Container(height: 1, color: const Color(0xffDFC7AB)),
             const SizedBox(height: 10),
-            _buildMenuItem('음성채팅'),
-            _buildMenuItem('찜한 책 목록'),
+            _buildMenuItem(
+              '음성세팅',
+              () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const MypageToVoicesetting()),
+                );
+              },
+            ),
+            _buildMenuItem(
+              '찜한 책 목록',
+              () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const MypageToFavoritebooks()),
+                );
+              },
+            ),
           ],
         ),
       ),
@@ -184,9 +209,36 @@ class _MypageScreenState extends State<MypageScreen>
             const Text('개인정보 및 설정'),
             Container(height: 1, color: const Color(0xffDFC7AB)),
             const SizedBox(height: 10),
-            _buildMenuItem('공지사항'),
-            _buildMenuItem('탈퇴하기'),
-            _buildMenuItem('로그아웃'),
+            _buildMenuItem(
+              '공지사항',
+              () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const MypageToNotice()),
+                );
+              },
+            ),
+            _buildMenuItem(
+              '탈퇴하기',
+              () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const MypageToDeleteaccount()),
+                );
+              },
+            ),
+            _buildMenuItem(
+              '로그아웃',
+              () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const MypageToDeleteaccount()),
+                );
+              },
+            ),
           ],
         ),
       ),
@@ -255,7 +307,7 @@ class _MypageScreenState extends State<MypageScreen>
     );
   }
 
-  Widget _buildMenuItem(String title) {
+  Widget _buildMenuItem(String title, VoidCallback onTap) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: ListTile(
@@ -266,9 +318,7 @@ class _MypageScreenState extends State<MypageScreen>
         trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
         contentPadding: EdgeInsets.zero,
         dense: true,
-        onTap: () {
-          // 메뉴 클릭 이벤트 처리
-        },
+        onTap: onTap, // 외부에서 받은 콜백 사용
       ),
     );
   }
