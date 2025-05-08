@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:phonics/screens/library_tab/home_tab_screen.dart';
 import 'package:phonics/screens/study_tab/study_tab.dart';
 import '../widgets/bottom_nav_bar.dart';
+import '../screens/mypage_tab/mypage_screen.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -34,9 +35,9 @@ class _MyHomePageState extends State<MyHomePage> {
       // case 3:
       //   page = const CreateBookPage();
       //   break;
-      // case 4:
-      //   page = const MyPage();
-      //   break;
+      case 4:
+        page = const MypageScreen();
+        break;
       default:
         page = const MyHomePage();
     }
