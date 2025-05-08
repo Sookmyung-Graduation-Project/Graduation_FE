@@ -27,7 +27,7 @@ class _RankingSectionState extends State<RankingSection>
           child: Row(
             children: [
               Icon(Icons.emoji_events, color: Colors.amber),
-              SizedBox(width: 8),
+              SizedBox(width: 12),
               Text(
                 'Top 10 Books',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
