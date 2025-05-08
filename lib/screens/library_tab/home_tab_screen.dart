@@ -5,6 +5,7 @@ import 'favorite_section.dart';
 import 'package:phonics/widgets/bottom_nav_bar.dart';
 import '../home.dart';
 import '../study_tab/study_tab.dart';
+import '../mypage_tab/mypage_screen.dart';
 
 class HomeTabScreen extends StatefulWidget {
   const HomeTabScreen({super.key});
@@ -55,9 +56,9 @@ class _HomeTabScreenState extends State<HomeTabScreen>
       // case 3:
       //   page = const CreateBookPage();
       //   break;
-      // case 4:
-      //   page = const MyPage();
-      //   break;
+      case 4:
+        page = const MypageScreen();
+        break;
       default:
         page = const MyHomePage();
     }

@@ -116,7 +116,7 @@ class _QuizScreenState extends State<QuizScreen> {
                     'What is the missing letter?',
                     style: TextStyle(
                       color: Color(0xff363535),
-                      fontSize: 26,
+                      fontSize: 16,
                     ),
                   ),
                 ),
