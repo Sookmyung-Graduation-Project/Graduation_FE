@@ -66,6 +66,26 @@ flutter:
     - assets/images/words/
     - assets/images/mypage/
     - assets/navigation_icons/
+  fonts:
+    - family: GyeonggiBatangBold
+      fonts:
+        - asset: fonts/GyeonggiBatang_Bold.ttf
+    - family: GyeonggiBatangRegular
+      fonts:
+        - asset: fonts/GyeonggiBatang_Regular.ttf
+    - family: GyeonggiTitleLight
+      fonts:
+        - asset: fonts/GyeonggiTitle_Light.ttf
+    - family: GyeonggiTitleMedium
+      fonts:
+        - asset: fonts/GyeonggiTitle_Medium.ttf
+    - family: GyeonggiTitleBold
+      fonts:
+        - asset: fonts/GyeonggiTitle_Bold.ttf
+    - family: GyeonggiTitleVBold
+      fonts:
+        - asset: fonts/GyeonggiTitleV_Bold.ttf
+
     
 
   #   - images/a_dot_ham.jpeg
@@ -81,7 +101,8 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
+
+
   #   - family: Schyler
   #     fonts:
   #       - asset: fonts/Schyler-Regular.ttf
