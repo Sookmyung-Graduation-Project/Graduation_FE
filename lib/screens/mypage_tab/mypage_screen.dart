@@ -276,6 +276,7 @@ class _MypageScreenState extends State<MypageScreen>
                     Text(
                       'Real Name',
                       style: TextStyle(
+                        fontFamily: 'GyeonggiTitleVBold',
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: Color(0xff525152),
@@ -285,7 +286,9 @@ class _MypageScreenState extends State<MypageScreen>
                     Text(
                       '학부모 / 자녀 ',
                       style: TextStyle(
+                        fontFamily: 'GyeonggiTitleLight',
                         fontSize: 14,
+                        fontWeight: FontWeight.w300,
                         color: Color(0xff525152),
                       ),
                     ),
