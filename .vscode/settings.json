@@ -1,5 +1,6 @@
 {
     "java.project.sourcePaths": [
         "assets/navigation_icons"
-    ]
+    ],
+    "java.configuration.updateBuildConfiguration": "interactive"
 }

@@ -24,6 +24,10 @@ class _MypageScreenState extends State<MypageScreen>
   late AnimationController _toggleController;
   late Animation<double> _animation;
 
+  //'확인' 버튼
+  final TextEditingController _inputController = TextEditingController();
+  final bool _isInputValid = false;
+
   @override
   void initState() {
     super.initState();
@@ -38,6 +42,7 @@ class _MypageScreenState extends State<MypageScreen>
   @override
   void dispose() {
     _toggleController.dispose();
+    _inputController.dispose();
     super.dispose();
   }
 
@@ -371,13 +376,148 @@ class _MypageScreenState extends State<MypageScreen>
             ),
             Row(
               children: [
+                // 학부모 탭 (왼쪽)
                 Expanded(
                   child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        isTopSelected = true;
-                        _toggleController.reverse();
-                      });
+                    onTap: () async {
+                      if (!isTopSelected) {
+                        final tempController = TextEditingController();
+                        bool isInputValid = false;
+
+                        final result = await showModalBottomSheet<bool>(
+                          context: context,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.vertical(top: Radius.circular(20)),
+                          ),
+                          backgroundColor: Colors.white,
+                          isDismissible: true,
+                          isScrollControlled: true, // 키보드 올라와도 대응
+                          builder: (context) {
+                            return StatefulBuilder(
+                              builder: (context, setModalState) {
+                                return Padding(
+                                  padding: MediaQuery.of(context)
+                                      .viewInsets, // 키보드 대응
+                                  child: Container(
+                                    padding: const EdgeInsets.all(25),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          '학부모 탭으로 넘어가기 위해, 아래의 단어를 입력해주세요.',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Color(0xff363535),
+                                            fontFamily: 'GyeonggiTitleLight',
+                                          ),
+                                        ),
+                                        const SizedBox(height: 20),
+                                        Container(
+                                          width: double.infinity,
+                                          alignment: Alignment.center,
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 15),
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: Color(0xffF1F1F1),
+                                                width: 2),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                          child: const Text(
+                                            '그루터기',
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              color: Color(0xff363535),
+                                              fontFamily: 'GyeonggiTitleVBold',
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 20),
+                                        TextField(
+                                          controller: tempController,
+                                          autofocus: true,
+                                          onChanged: (value) {
+                                            setModalState(() {
+                                              isInputValid =
+                                                  value.trim() == '그루터기';
+                                            });
+                                          },
+                                          decoration: InputDecoration(
+                                            hintText: '위 텍스트를 입력해주세요.',
+                                            filled: true,
+                                            fillColor: const Color(0xffF2F2F2),
+                                            border: OutlineInputBorder(
+                                              borderSide: BorderSide.none,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                          ),
+                                        ),
+                                        Visibility(
+                                          visible: !isInputValid &&
+                                              tempController.text.isNotEmpty,
+                                          child: const Text(
+                                            '일치하지 않습니다.',
+                                            style: TextStyle(
+                                                color: Color(0xffD84040)),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 40),
+                                        TextButton(
+                                          onPressed: isInputValid
+                                              ? () {
+                                                  Navigator.pop(context, true);
+                                                }
+                                              : null,
+                                          child: Container(
+                                            alignment: Alignment.center,
+                                            width: double.infinity,
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 15),
+                                            decoration: BoxDecoration(
+                                              color: isInputValid
+                                                  ? const Color(0xffFFFCC3)
+                                                  : const Color(0xffF3F3F3),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            child: Text(
+                                              '확인',
+                                              style: TextStyle(
+                                                color: isInputValid
+                                                    ? const Color(0xffA57444)
+                                                    : const Color(0xffBCBCBC),
+                                                fontFamily: 'GyeonggiTitleBold',
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        );
+
+                        if (result == true) {
+                          setState(() {
+                            isTopSelected = true;
+                            _toggleController.reverse();
+                          });
+                        } else {
+                          setState(() {
+                            isTopSelected = false;
+                            _toggleController.forward();
+                          });
+                        }
+                      }
                     },
                     child: Center(
                       child: Text(
@@ -391,6 +531,8 @@ class _MypageScreenState extends State<MypageScreen>
                     ),
                   ),
                 ),
+
+                // 자녀 탭 (오른쪽)
                 Expanded(
                   child: GestureDetector(
                     onTap: () {
