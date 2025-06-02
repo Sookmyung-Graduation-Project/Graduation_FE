@@ -1,2 +1,0 @@
-/Users/choiwoojin/Developer/GraduateCollaborate/android/app/.cxx/RelWithDebInfo/n2s1a2og/arm64-v8a/CMakeFiles/edit_cache.dir
-/Users/choiwoojin/Developer/GraduateCollaborate/android/app/.cxx/RelWithDebInfo/n2s1a2og/arm64-v8a/CMakeFiles/rebuild_cache.dir
