@@ -1,2 +1,0 @@
-C:/graduation_project/GraduateCollaborate/android/app/.cxx/Debug/4u5j1j6s/arm64-v8a/CMakeFiles/edit_cache.dir
-C:/graduation_project/GraduateCollaborate/android/app/.cxx/Debug/4u5j1j6s/arm64-v8a/CMakeFiles/rebuild_cache.dir
