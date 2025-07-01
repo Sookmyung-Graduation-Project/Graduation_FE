@@ -70,8 +70,8 @@ lib/
 | 프로필 | 이름 (GitHub) | 담당 기능 | 세부 내용 |
 |--------|---------------|-----------|-----------|
 | ![김문원](https://github.com/angkmfirefoxygal.png) | 김문원 ([angkmfirefoxygal](https://github.com/angkmfirefoxygal)) | **Task 관리 UI** | 과제/할 일 등록, 수정, 삭제 UI 및 캘린더 라이브러리 연동 |
-| ![최우진](https://github.com/hagoeun0119.png) | 하고은 ([hagoeun0119](https://github.com/woojin-devv)) | **홈 UI** | 로그인/회원가입 흐름 구현, 프로젝트별 홈 화면 UI |
-| ![한지윤](https://github.com/siiion.png) | 전시원 ([siiion](https://github.com/yunhit)) | **프로젝트 UI** | 프로젝트별 상세 페이지, 피드백 리스트 및 작성 기능 |
+| ![최우진](https://github.com/woojin-devv.png) | 최우진 ([woojin-devv](https://github.com/woojin-devv)) | **홈 UI** | 로그인/회원가입 흐름 구현, 프로젝트별 홈 화면 UI |
+| ![한지윤](https://github.com/yunhit.png) | 한지윤 ([yunhit](https://github.com/yunhit)) | **프로젝트 UI** | 프로젝트별 상세 페이지, 피드백 리스트 및 작성 기능 |
 
 ---
 
