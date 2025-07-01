@@ -37,11 +37,14 @@
 
 
 ### 🔹 주요 기술 스택
-
+```bash
 [Frontend]
-├── Flutter
+├── Flutter 
 ├── Provider (State Management)
 └── http (API 연동)
+
+```
+---
 
 ## Project Structure
 
