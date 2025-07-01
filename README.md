@@ -21,7 +21,7 @@
       <img src="assets/icon/app_icon.png" width="60" alt="GraduationCollaborate App Icon"/>
     </td>
     <td>
-      <h2><b>GraduationCollaborate</b> - 졸업 프로젝트 협업 플랫폼</h2>
+      <h2><b>GraduationCollaborate</b> - 2025 숙명여대 졸업프로젝트 FE </h2>
     </td>
   </tr>
 </table>
@@ -30,13 +30,11 @@
 2025년 3월 ~ 2025년 8월
 
 ### 🔹 개발 배경
-대학교 졸업 프로젝트에서 팀원 간 일정 공유, 진척 관리, 피드백 수집의 필요성이 커지고 있습니다. 기존 메신저나 간단한 공유 드라이브만으로는 체계적인 협업과 산출물 관리에 한계가 있습니다.
+
 
 ### 🔹 개발 목표
 
-- **졸업 프로젝트 전용 협업 플랫폼 구현**
-- **할 일, 일정, 산출물, 피드백 통합 관리**
-- **사용자 친화적 UI 제공으로 협업 효율 향상**
+
 
 ### 🔹 주요 기술 스택
 
@@ -71,9 +69,9 @@ lib/
 
 | 프로필 | 이름 (GitHub) | 담당 기능 | 세부 내용 |
 |--------|---------------|-----------|-----------|
-| ![김문원](https://github.com/angkmfirefoxygal.png) | 김문원 ([angkmfirefoxygal](https://github.com/angkmfirefoxygal)) | **Task 관리 UI, 캘린더 연동** | 과제/할 일 등록, 수정, 삭제 UI 및 캘린더 라이브러리 연동 |
-| ![하고은](https://github.com/hagoeun0119.png) | 하고은 ([hagoeun0119](https://github.com/hagoeun0119)) | **Firebase Auth 연동 및 홈 UI** | 로그인/회원가입 흐름 구현, 프로젝트별 홈 화면 UI |
-| ![전시원](https://github.com/siiion.png) | 전시원 ([siiion](https://github.com/siiion)) | **프로젝트 상세 및 피드백 UI** | 프로젝트별 상세 페이지, 피드백 리스트 및 작성 기능 |
+| ![김문원](https://github.com/angkmfirefoxygal.png) | 김문원 ([angkmfirefoxygal](https://github.com/angkmfirefoxygal)) | **Task 관리 UI** | 과제/할 일 등록, 수정, 삭제 UI 및 캘린더 라이브러리 연동 |
+| ![최우진](https://github.com/hagoeun0119.png) | 하고은 ([hagoeun0119](https://github.com/hagoeun0119)) | **홈 UI** | 로그인/회원가입 흐름 구현, 프로젝트별 홈 화면 UI |
+| ![한지윤](https://github.com/siiion.png) | 전시원 ([siiion](https://github.com/siiion)) | **프로젝트 UI** | 프로젝트별 상세 페이지, 피드백 리스트 및 작성 기능 |
 
 ---
 
