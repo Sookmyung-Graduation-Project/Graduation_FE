@@ -544,7 +544,7 @@ final List<DailyWord> dailyWordList = [
     id: 76,
     word: 'go',
     meaning: '가다',
-    example: 'Let’s go to the park.',
+    example: 'Lets go to the park.',
     exampleKo: '공원에 가자.',
   ),
   DailyWord(
@@ -1353,3 +1353,11 @@ final List<DailyWord> dailyWordList = [
     exampleKo: '얼룩말 3마리가 있어.',
   ),
 ];
+
+DailyWord getTodayWord() {
+   DateTime now = DateTime.now();
+  int dayOfYear = now.difference(DateTime(now.year, 1, 1)).inDays;
+  int wordIndex = dayOfYear % dailyWordList.length;
+  
+  return dailyWordList[wordIndex];
+}
