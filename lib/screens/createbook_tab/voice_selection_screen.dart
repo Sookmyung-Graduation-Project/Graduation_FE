@@ -3,6 +3,7 @@ import '../../widgets/custom_dropdown.dart';
 import '../../widgets/show_selected.dart';
 import '../../widgets/create_button.dart';
 import 'package:flutter/material.dart';
+import '../mypage_tab/mypage_to_voicesetting.dart';
 
 class VoiceSelectionScreen extends StatelessWidget {
   final String selectedVoice;
@@ -28,6 +29,15 @@ class VoiceSelectionScreen extends StatelessWidget {
     required this.selectedAgeGroup,
   });
 
+  void _goToVoiceSettingScreen(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const MypageToVoicesetting(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -45,7 +55,7 @@ class VoiceSelectionScreen extends StatelessWidget {
           onChanged: onVoiceSelected,
         ),
         TextButton(
-          onPressed: () {},
+          onPressed: () => _goToVoiceSettingScreen(context),
           child: Text(
             '새로운 목소리 모델 추가하기',
             style: TextStyle(
