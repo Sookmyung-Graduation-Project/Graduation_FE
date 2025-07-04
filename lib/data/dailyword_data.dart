@@ -16,13 +16,6 @@ class DailyWord {
   });
 }
 
-DailyWord getTodayWord() {
-  final random = Random();
-  int randomId = random.nextInt(191) + 1; // 1 ~ 191 사이의 랜덤 ID 생성
-  return dailyWordList
-      .firstWhere((word) => word.id == randomId); // ID에 맞는 단어를 반환
-}
-
 final List<DailyWord> dailyWordList = [
   DailyWord(
     id: 1,
@@ -553,7 +546,7 @@ final List<DailyWord> dailyWordList = [
     id: 76,
     word: 'go',
     meaning: '가다',
-    example: 'Lets go to the park.',
+    example: 'Let\'s go to the park.',
     exampleKo: '공원에 가자.',
   ),
   DailyWord(
@@ -573,7 +566,7 @@ final List<DailyWord> dailyWordList = [
   DailyWord(
     id: 79,
     word: 'goat',
-    meaning: '엄소',
+    meaning: '염소',
     example: 'The goat eats grass.',
     exampleKo: '염소가 풀을 먹어.',
   ),
@@ -1316,8 +1309,8 @@ final List<DailyWord> dailyWordList = [
     id: 185,
     word: 'river',
     meaning: '강',
-    example: 'The river is long.',
-    exampleKo: '강이 길어.',
+    example: 'We played near the river yesterday.',
+    exampleKo: '우리는 어제 강 근처에서 놀았어.',
   ),
   DailyWord(
     id: 186,
@@ -1362,3 +1355,11 @@ final List<DailyWord> dailyWordList = [
     exampleKo: '얼룩말 3마리가 있어.',
   ),
 ];
+
+DailyWord getTodayWord() {
+  DateTime now = DateTime.now();
+  int dayOfYear = now.difference(DateTime(now.year, 1, 1)).inDays;
+  int wordIndex = dayOfYear % dailyWordList.length;
+
+  return dailyWordList[wordIndex];
+}
