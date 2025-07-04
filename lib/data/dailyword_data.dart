@@ -1,3 +1,5 @@
+import 'dart:math';
+
 class DailyWord {
   final int id;
   final String word;
@@ -12,6 +14,13 @@ class DailyWord {
     required this.example,
     required this.exampleKo,
   });
+}
+
+DailyWord getTodayWord() {
+  final random = Random();
+  int randomId = random.nextInt(191) + 1; // 1 ~ 191 사이의 랜덤 ID 생성
+  return dailyWordList
+      .firstWhere((word) => word.id == randomId); // ID에 맞는 단어를 반환
 }
 
 final List<DailyWord> dailyWordList = [
@@ -544,7 +553,7 @@ final List<DailyWord> dailyWordList = [
     id: 76,
     word: 'go',
     meaning: '가다',
-    example: 'Let’s go to the park.',
+    example: 'Lets go to the park.',
     exampleKo: '공원에 가자.',
   ),
   DailyWord(
