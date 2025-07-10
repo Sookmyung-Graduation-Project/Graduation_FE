@@ -60,7 +60,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   void _onCheckPressed() {
     setState(() {
-      _isChecked = true;
+      _isChecked = !_isChecked;
       _consecutiveDays = 1;
       _showBubble = true;
     });
