@@ -4,6 +4,7 @@ import '../../widgets/custom_progress_bar_v2.dart';
 import '../../widgets/speech_bubble.dart';
 import '../../widgets/go_button.dart';
 import 'package:flutter/material.dart';
+import '../library_tab/home_tab_screen.dart';
 
 class GeneratingScreen extends StatefulWidget {
   const GeneratingScreen({super.key});
@@ -15,6 +16,7 @@ class GeneratingScreen extends StatefulWidget {
 class _GeneratingScreenState extends State<GeneratingScreen> {
   double _progress = 0.0;
   String _message = '책을 생성하고 있어요';
+  bool _showGoButton = false;
 
   @override
   void initState() {
@@ -29,10 +31,20 @@ class _GeneratingScreenState extends State<GeneratingScreen> {
         if (_progress >= 1.5) {
           _progress = 1.0;
           _message = '책이 완성되었어요!';
+          _showGoButton = true;
           timer.cancel();
         }
       });
     });
+  }
+
+  void _goToLibHomeScreen(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const HomeTabScreen(),
+      ),
+    );
   }
 
   @override
@@ -106,11 +118,16 @@ class _GeneratingScreenState extends State<GeneratingScreen> {
                         ),
                     ],
                   ),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 1),
                   Padding(
                     padding: const EdgeInsets.only(left: 20),
                     child: DinosaurProgressBar(progress: _progress),
                   ),
+                  const SizedBox(height: 30),
+                  if (_showGoButton)
+                    GoButton(
+                      onPressed: () => _goToLibHomeScreen(context),
+                    ),
                 ],
               ),
             ),
