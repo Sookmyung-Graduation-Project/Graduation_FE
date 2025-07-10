@@ -99,7 +99,7 @@ class LessonCompleteCard extends StatelessWidget {
                     child: Center(
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context).pop(); // <-- Dialog 닫기
+                          Navigator.of(context).pop();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xffFAC632),
