@@ -14,11 +14,13 @@ dependencies:
   dropdown_button2: ^2.3.9
   flutter:
     sdk: flutter
+  flutter_dotenv: ^5.2.1
   flutter_sound: ^9.28.0
   flutter_tts: ^4.2.3
   kakao_flutter_sdk: ^1.9.7+3
   path_provider: ^2.1.5
   permission_handler: ^12.0.0+1
+  url_strategy: ^0.3.0
 
 dev_dependencies:
   flutter_dash: ^1.0.0
@@ -32,6 +34,7 @@ flutter:
   uses-material-design: true
 
   assets:
+    - .env
     - assets/images/
     - assets/images/words/
     - assets/images/mypage/
