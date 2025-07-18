@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:phonics/core/utils/kakaologin.dart';
 import 'package:phonics/screens/home.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -16,12 +17,16 @@ class LoginScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const MyHomePage()),
-                    );
+                  onPressed: () async {
+                    final user = await KakaoLoginApi().signWithKakao();
+                    if (user != null) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const MyHomePage(),
+                        ),
+                      );
+                    }
                   },
                   child: Container(
                     padding: EdgeInsets.all(16),
