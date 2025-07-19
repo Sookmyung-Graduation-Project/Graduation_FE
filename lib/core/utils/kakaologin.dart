@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
+import 'package:phonics/core/utils/api_service.dart';
 
 class KakaoLoginApi {
   Future<User?> signWithKakao() async {
@@ -23,6 +24,8 @@ class KakaoLoginApi {
 
       print('AccessToken: ${token.accessToken}');
       print('RefreshToken: ${token.refreshToken}');
+
+      await ApiService.sendTokenToBackend(token.accessToken, 'kakao');
 
       User user = await UserApi.instance.me();
       return user;
