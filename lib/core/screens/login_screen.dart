@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:phonics/core/router/routes.dart';
 import 'package:phonics/core/utils/kakaologin.dart';
 import 'package:phonics/screens/home.dart';
 
@@ -57,12 +59,12 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
                 TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const MyHomePage()),
-                    );
+                  onPressed: () async {
+                    final user = await KakaoLoginApi().signWithKakao();
+                    if (user != null) {
+                      // 로그인 성공 후 GoRouter로 MyHomePage로 이동
+                      context.go(Routes.home); // GoRouter 사용
+                    }
                   },
                   child: Container(
                     padding: EdgeInsets.all(16),

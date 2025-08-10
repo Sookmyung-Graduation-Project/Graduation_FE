@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
   final int selectedIndex;
@@ -15,8 +16,6 @@ class CustomBottomNavBar extends StatelessWidget {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
-    double iconSize = 70;
-
     return SafeArea(
       child: Stack(
         clipBehavior: Clip.none,
@@ -25,7 +24,6 @@ class CustomBottomNavBar extends StatelessWidget {
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
             height: screenHeight * 0.072,
-            // width: screenWidth, // 이 줄은 빼세요!
             decoration: BoxDecoration(
               color: const Color(0xffFFFCC3),
               boxShadow: [
@@ -41,7 +39,6 @@ class CustomBottomNavBar extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // 탭 1
                 Expanded(
                   child: _buildTabItem(
                     index: 1,
@@ -53,7 +50,6 @@ class CustomBottomNavBar extends StatelessWidget {
                     screenWidth: screenWidth,
                   ),
                 ),
-                // 탭 2
                 Expanded(
                   child: _buildTabItem(
                     index: 2,
@@ -64,9 +60,7 @@ class CustomBottomNavBar extends StatelessWidget {
                     screenWidth: screenWidth,
                   ),
                 ),
-                // 중앙 홈 버튼 공간용 (아무것도 없음)
-                const SizedBox(width: 60), // 홈버튼이 겹치지 않게 적당히 공간 확보
-                // 탭 3
+                const SizedBox(width: 60), // 중앙 홈 버튼 공간
                 Expanded(
                   child: _buildTabItem(
                     index: 3,
@@ -78,7 +72,6 @@ class CustomBottomNavBar extends StatelessWidget {
                     screenWidth: screenWidth,
                   ),
                 ),
-                // 탭 4
                 Expanded(
                   child: _buildTabItem(
                     index: 4,
@@ -116,7 +109,7 @@ class CustomBottomNavBar extends StatelessWidget {
             child: GestureDetector(
               onTap: () {
                 if (selectedIndex != 0) {
-                  onTabTapped(0);
+                  onTabTapped(0); // 중앙 홈 버튼 클릭 시 홈으로 이동
                 }
               },
               child: Container(
@@ -160,7 +153,7 @@ class CustomBottomNavBar extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         if (selectedIndex != index) {
-          onTabTapped(index);
+          onTabTapped(index); // 탭을 클릭할 때 onTabTapped 호출
         }
       },
       child: Column(

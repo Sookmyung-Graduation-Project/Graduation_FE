@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:phonics/core/router/routes.dart';
 import '../../widgets/phonics_button.dart';
 import '../../widgets/quiz_button.dart';
 
@@ -55,11 +57,11 @@ class _StudyScreenState extends State<StudyScreen> {
                     ]),
                 child: IconButton(
                   icon: const Icon(
-                    Icons.arrow_back_rounded,
+                    Icons.home,
                     size: 25,
                   ),
                   onPressed: () {
-                    Navigator.pushNamed(context, '/home');
+                    context.go(Routes.home);
                   },
                 ),
               ),

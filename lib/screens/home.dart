@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:phonics/core/router/routes.dart';
 import 'package:phonics/screens/library_tab/home_tab_screen.dart';
 import 'package:phonics/screens/study_tab/study_tab.dart';
 import '../widgets/bottom_nav_bar.dart';
@@ -15,7 +17,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
-  int _selectedIndex = 0;
+  final int _selectedIndex = 0;
   int _consecutiveDays = 0;
   bool _isChecked = false;
   bool _showBubble = false;
@@ -77,43 +79,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         }
       });
     });
-  }
-
-  void _onTabTapped(int index) {
-    if (_selectedIndex == index) return;
-
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    Widget page;
-    switch (index) {
-      case 0:
-        page = const MyHomePage();
-        break;
-      case 1:
-        page = const HomeTabScreen();
-        break;
-      case 2:
-        page = const StudyScreen();
-        break;
-      case 3:
-        page = const CreateBookScreen();
-        break;
-      case 4:
-        page = const MypageScreen();
-        break;
-      default:
-        page = const MyHomePage();
-    }
-
-    Navigator.of(context).pushReplacement(
-      PageRouteBuilder(
-        pageBuilder: (_, __, ___) => page,
-        transitionDuration: Duration.zero,
-        reverseTransitionDuration: Duration.zero,
-      ),
-    );
   }
 
   @override
@@ -448,10 +413,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: CustomBottomNavBar(
-        selectedIndex: _selectedIndex,
-        onTabTapped: _onTabTapped,
       ),
     );
   }

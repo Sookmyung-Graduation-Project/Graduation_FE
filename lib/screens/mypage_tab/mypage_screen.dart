@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:phonics/core/router/routes.dart';
 import 'package:phonics/screens/mypage_tab/mypage_to_deleteaccount.dart';
 import 'package:phonics/screens/mypage_tab/mypage_to_notice.dart';
 import 'package:phonics/screens/mypage_tab/mypage_to_voicesetting.dart';
-import '../library_tab/home_tab_screen.dart';
-import '../home.dart';
-import '../study_tab/study_tab.dart';
 import '../../widgets/bottom_nav_bar.dart';
 import 'package:phonics/screens/mypage_tab/mypage_to_favoritebooks.dart';
 
@@ -17,7 +16,7 @@ class MypageScreen extends StatefulWidget {
 
 class _MypageScreenState extends State<MypageScreen>
     with SingleTickerProviderStateMixin {
-  int _selectedIndex = 4;
+  final int _selectedIndex = 4;
 
   //toggle
   bool isTopSelected = true;
@@ -44,43 +43,6 @@ class _MypageScreenState extends State<MypageScreen>
     _toggleController.dispose();
     _inputController.dispose();
     super.dispose();
-  }
-
-  void _onTabTapped(int index) {
-    if (_selectedIndex == index) return;
-
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    Widget page;
-    switch (index) {
-      case 0:
-        page = const MyHomePage();
-        break;
-      case 1:
-        page = const HomeTabScreen();
-        break;
-      case 2:
-        page = const StudyScreen();
-        break;
-      // case 3:
-      //   page = 책만들기();
-      // break;
-      case 4:
-        page = const MypageScreen();
-        break;
-      default:
-        page = const MyHomePage();
-    }
-
-    Navigator.of(context).pushReplacement(
-      PageRouteBuilder(
-        pageBuilder: (_, __, ___) => page,
-        transitionDuration: Duration.zero,
-        reverseTransitionDuration: Duration.zero,
-      ),
-    );
   }
 
   @override
@@ -142,10 +104,6 @@ class _MypageScreenState extends State<MypageScreen>
             child: buildToggleButton(screenWidth),
           ),
         ],
-      ),
-      bottomNavigationBar: CustomBottomNavBar(
-        selectedIndex: _selectedIndex,
-        onTabTapped: _onTabTapped,
       ),
     );
   }

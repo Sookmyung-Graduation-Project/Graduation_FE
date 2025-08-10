@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:phonics/core/router/routes.dart';
 import 'recent_section.dart';
 import 'ranking_section.dart';
 import 'favorite_section.dart';
 import 'package:phonics/widgets/bottom_nav_bar.dart';
-import '../home.dart';
-import '../study_tab/study_tab.dart';
-import '../mypage_tab/mypage_screen.dart';
 
 class HomeTabScreen extends StatefulWidget {
   const HomeTabScreen({super.key});
@@ -16,7 +15,7 @@ class HomeTabScreen extends StatefulWidget {
 
 class _HomeTabScreenState extends State<HomeTabScreen>
     with SingleTickerProviderStateMixin {
-  int _selectedIndex = 1;
+  final int _selectedIndex = 1;
 
   //int _selectedIndex = 0;
 
@@ -32,44 +31,6 @@ class _HomeTabScreenState extends State<HomeTabScreen>
   void dispose() {
     _tabController.dispose();
     super.dispose();
-  }
-
-  @override
-  void _onTabTapped(int index) {
-    if (_selectedIndex == index) return;
-
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    Widget page;
-    switch (index) {
-      case 0:
-        page = const MyHomePage();
-        break;
-      case 1:
-        page = const HomeTabScreen();
-        break;
-      case 2:
-        page = const StudyScreen();
-        break;
-      // case 3:
-      //   page = const CreateBookPage();
-      //   break;
-      case 4:
-        page = const MypageScreen();
-        break;
-      default:
-        page = const MyHomePage();
-    }
-
-    Navigator.of(context).pushReplacement(
-      PageRouteBuilder(
-        pageBuilder: (_, __, ___) => page,
-        transitionDuration: Duration.zero,
-        reverseTransitionDuration: Duration.zero,
-      ),
-    );
   }
 
   @override
@@ -231,15 +192,6 @@ class _HomeTabScreenState extends State<HomeTabScreen>
                 ),
               ),
             ],
-          ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: CustomBottomNavBar(
-              selectedIndex: _selectedIndex,
-              onTabTapped: _onTabTapped,
-            ),
           ),
         ],
       ),
