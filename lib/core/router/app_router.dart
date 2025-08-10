@@ -1,19 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:phonics/core/screens/login_screen.dart';
 import 'package:phonics/screens/home.dart';
 import 'package:phonics/screens/library_tab/home_tab_screen.dart';
 import 'package:phonics/screens/mypage_tab/mypage_screen.dart';
+import 'package:phonics/screens/study_tab/phonics_menu.dart';
+import 'package:phonics/screens/study_tab/quiz_menu.dart';
 import 'package:phonics/screens/study_tab/study_tab.dart';
 import 'package:phonics/screens/createbook_tab/createbook_screen.dart';
 import 'package:phonics/widgets/bottom_nav_bar.dart';
 import 'package:phonics/core/router/routes.dart';
+import 'package:phonics/screens/study_tab/quiz_detailmenu.dart';
 
 final GoRouter appRouter = GoRouter(
-  initialLocation: Routes.home,
+  initialLocation: Routes.login,
   routes: [
+    GoRoute(
+      path: Routes.login,
+      builder: (context, state) => const LoginScreen(),
+      routes: [
+        GoRoute(
+          path: Routes.home,
+          builder: (context, state) => const MyHomePage(),
+        ),
+      ],
+    ),
     ShellRoute(
       builder: (context, state, child) {
-        // 현재 경로에 맞는 selectedIndex 값 설정
         int selectedIndex = 0;
         if (state.uri.toString() == Routes.homeTab) {
           selectedIndex = 1;
@@ -25,17 +38,16 @@ final GoRouter appRouter = GoRouter(
           selectedIndex = 4;
         }
 
-        // study 화면에서는 하단 네비게이션 바를 숨기도록 처리
-        bool showBottomNavBar = state.uri.toString() != Routes.study;
+        bool showBottomNavBar = state.uri.toString() == Routes.home ||
+            state.uri.toString() == Routes.homeTab ||
+            state.uri.toString() == Routes.myPage;
 
         return Scaffold(
-          backgroundColor: Colors.transparent, // 전체 배경을 투명하게 설정
-          resizeToAvoidBottomInset: false, // 하단 네비게이션이 콘텐츠를 밀지 않도록 설정
+          backgroundColor: Colors.transparent,
+          resizeToAvoidBottomInset: false,
           body: Stack(
             children: [
-              Positioned.fill(child: child), // 하위 화면을 Stack 내에 배치
-
-              // 하단 네비게이션 바가 필요할 때만 표시
+              Positioned.fill(child: child),
               if (showBottomNavBar)
                 Positioned(
                   bottom: 0,
@@ -46,22 +58,22 @@ final GoRouter appRouter = GoRouter(
                     onTabTapped: (index) {
                       switch (index) {
                         case 0:
-                          context.go(Routes.home); // 홈으로 이동
+                          context.go(Routes.home);
                           break;
                         case 1:
-                          context.go(Routes.homeTab); // 홈탭으로 이동
+                          context.go(Routes.homeTab);
                           break;
                         case 2:
-                          context.go(Routes.study); // 학습으로 이동
+                          context.go(Routes.study);
                           break;
                         case 3:
-                          context.go(Routes.bookCreation); // 책 생성으로 이동
+                          context.go(Routes.bookCreation);
                           break;
                         case 4:
-                          context.go(Routes.myPage); // 마이페이지로 이동
+                          context.go(Routes.myPage);
                           break;
                         default:
-                          context.go(Routes.home); // 기본적으로 홈
+                          context.go(Routes.home);
                       }
                     },
                   ),
@@ -90,6 +102,20 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
           path: Routes.study,
           builder: (context, state) => const StudyScreen(),
+          routes: [
+            GoRoute(
+                path: Routes.quiz,
+                builder: (context, state) => const QuizMenu(),
+                routes: [
+                  GoRoute(
+                      path: Routes.quizDetail,
+                      builder: (context, state) => QuizDetailmenu()),
+                ]),
+            GoRoute(
+              path: Routes.phonics,
+              builder: (context, state) => const PhonicsScreen(),
+            ),
+          ],
         ),
       ],
     ),

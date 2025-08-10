@@ -1,13 +1,12 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class ApiService {
-  static final String baseUrl = 'http://localhost:8000';
+import 'package:phonics/core/const/const.dart';
 
+class ApiService {
   static Future<void> sendTokenToBackend(
       String accessToken, String provider) async {
-    // 각 provider에 맞는 경로로 요청을 보냄
-    String url = '$baseUrl/login/$provider'; // /login/kakao 또는 /login/google
+    String url = '${ApiUrls.loginUrl}/$provider';
 
     final body = json.encode({
       'access_token': accessToken,
@@ -22,12 +21,11 @@ class ApiService {
         body: body,
       );
 
-      // 응답 상태 코드와 본문을 로그로 출력
       print('Response Status: ${response.statusCode}');
       print('Response Body: ${response.body}');
 
       if (response.statusCode == 200) {
-        print('Token sent to backend successfully');
+        print('백엔드로 access token 전송 성공');
       } else {
         print('Failed to send token to backend: ${response.statusCode}');
       }

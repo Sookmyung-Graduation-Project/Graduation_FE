@@ -1,23 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:phonics/screens/study_tab/quiz_menu.dart';
+import 'package:go_router/go_router.dart';
+import 'package:phonics/core/router/routes.dart';
 
 class QuizButton extends StatelessWidget {
   const QuizButton({super.key});
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
     return _buildButton(
       imageAsset: 'assets/images/start_quiz_button_logo.png',
       color: const Color(0xffb7c0f9),
       onTap: () {
-        Navigator.push(
-          context,
-          // MaterialPageRoute(builder: (context) => const QuizScreen()),
-
-          MaterialPageRoute(builder: (context) => const QuizMenu()),
-        );
+        context.go('${Routes.study}/${Routes.quiz}');
       },
     );
   }

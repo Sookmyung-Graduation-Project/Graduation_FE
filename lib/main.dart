@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_common.dart';
 import 'package:phonics/core/router/app_router.dart';
 import 'package:url_strategy/url_strategy.dart';
@@ -14,7 +15,7 @@ void main() async {
   KakaoSdk.init(
       nativeAppKey: kakaoNativeAppKey, javaScriptAppKey: kakaoJavaScriptKey);
   setPathUrlStrategy();
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {

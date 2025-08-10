@@ -5,4 +5,9 @@ class Routes {
   static const String study = '/study';
   static const String myPage = '/myPage';
   static const String bookCreation = '/bookCreation';
+
+  static const String quiz = 'quiz';
+  static const String phonics = 'phonics';
+  static const String quizMenu = 'quizMenu';
+  static const String quizDetail = 'quizDetail';
 }

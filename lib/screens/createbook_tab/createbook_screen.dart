@@ -1,3 +1,6 @@
+import 'package:go_router/go_router.dart';
+import 'package:phonics/core/router/routes.dart';
+
 import 'character_selection_screen.dart';
 import 'gender_age_screen.dart';
 import 'lesson_selection_screen.dart';
@@ -199,7 +202,7 @@ class _CreateBookScreenState extends State<CreateBookScreen> {
                 child: IconButton(
                   icon: const Icon(Icons.arrow_back_rounded, size: 20),
                   onPressed: () {
-                    Navigator.pushNamed(context, '/home');
+                    context.go(Routes.home);
                   },
                 ),
               ),

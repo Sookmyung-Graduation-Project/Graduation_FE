@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:phonics/screens/study_tab/phonics_menu.dart';
+import 'package:go_router/go_router.dart';
+import 'package:phonics/core/router/routes.dart';
 
 class PhonicsButton extends StatelessWidget {
   const PhonicsButton({super.key});
@@ -10,10 +11,7 @@ class PhonicsButton extends StatelessWidget {
       imageAsset: 'assets/images/abc_button_logo.png',
       color: const Color(0xffcebc62),
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const PhonicsScreen()),
-        );
+        context.go('${Routes.study}/${Routes.phonics}');
       },
     );
   }

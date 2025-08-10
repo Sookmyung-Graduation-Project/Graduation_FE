@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:phonics/core/router/routes.dart';
 import 'recent_section.dart';
 import 'ranking_section.dart';
 import 'favorite_section.dart';
-import 'package:phonics/widgets/bottom_nav_bar.dart';
 
 class HomeTabScreen extends StatefulWidget {
   const HomeTabScreen({super.key});
@@ -15,10 +12,6 @@ class HomeTabScreen extends StatefulWidget {
 
 class _HomeTabScreenState extends State<HomeTabScreen>
     with SingleTickerProviderStateMixin {
-  final int _selectedIndex = 1;
-
-  //int _selectedIndex = 0;
-
   late TabController _tabController;
 
   @override
