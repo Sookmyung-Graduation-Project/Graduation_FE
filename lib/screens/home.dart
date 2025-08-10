@@ -1,21 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:phonics/screens/library_tab/home_tab_screen.dart';
-import 'package:phonics/screens/study_tab/study_tab.dart';
-import '../widgets/bottom_nav_bar.dart';
-import '../screens/mypage_tab/mypage_screen.dart';
-import 'createbook_tab/createbook_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:phonics/core/provider/login_provider.dart';
 import '../data/dailyword_data.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
-class MyHomePage extends StatefulWidget {
+class MyHomePage extends ConsumerStatefulWidget {
   const MyHomePage({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  ConsumerState<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
-  int _selectedIndex = 0;
+class _MyHomePageState extends ConsumerState<MyHomePage>
+    with TickerProviderStateMixin {
   int _consecutiveDays = 0;
   bool _isChecked = false;
   bool _showBubble = false;
@@ -79,43 +76,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     });
   }
 
-  void _onTabTapped(int index) {
-    if (_selectedIndex == index) return;
-
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    Widget page;
-    switch (index) {
-      case 0:
-        page = const MyHomePage();
-        break;
-      case 1:
-        page = const HomeTabScreen();
-        break;
-      case 2:
-        page = const StudyScreen();
-        break;
-      case 3:
-        page = const CreateBookScreen();
-        break;
-      case 4:
-        page = const MypageScreen();
-        break;
-      default:
-        page = const MyHomePage();
-    }
-
-    Navigator.of(context).pushReplacement(
-      PageRouteBuilder(
-        pageBuilder: (_, __, ___) => page,
-        transitionDuration: Duration.zero,
-        reverseTransitionDuration: Duration.zero,
-      ),
-    );
-  }
-
   @override
   void dispose() {
     _bubbleAnimationController?.dispose();
@@ -125,6 +85,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final userResponse = ref.watch(userResponseProvider);
+
     return Scaffold(
       backgroundColor: const Color(0xFFFFF8E1),
       body: SafeArea(
@@ -137,8 +99,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // 앱 로고/이름
-                    const Text(
-                      'APP LOGO | NAME',
+                    Text(
+                      'APP LOGO | ${userResponse?.nickname ?? 'Guest'} 님',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -448,10 +410,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: CustomBottomNavBar(
-        selectedIndex: _selectedIndex,
-        onTabTapped: _onTabTapped,
       ),
     );
   }
