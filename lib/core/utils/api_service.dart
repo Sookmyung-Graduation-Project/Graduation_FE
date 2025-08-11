@@ -25,12 +25,19 @@ class ApiService {
       print('Response Body: ${response.body}');
 
       if (response.statusCode == 200) {
-        print('백엔드로 access token 전송 성공');
+        print('==백엔드로 access token 전송 성공==');
+        final responseData = json.decode(response.body);
+        print('Response data: $responseData');
+        return responseData;
       } else {
-        print('Failed to send token to backend: ${response.statusCode}');
+        print('Error: ${response.statusCode}');
+        return;
       }
     } catch (e) {
       print('Error sending token to backend: $e');
+      return;
     }
   }
+
+  // backend에서 user info를 가져오는 함수
 }

@@ -35,13 +35,14 @@ class KakaoLoginApi {
       UserResponse userResponse = UserResponse(
         userId: user.id.toString(),
         nickname: user.properties?['nickname'] ?? 'No Name',
+        profileImage: user.properties?['profile_image'] ?? '',
       );
 
       print('로그인 성공: ${userResponse.nickname}, UserId: ${userResponse.userId}');
-      return userResponse; // UserResponse 객체 반환
+      return userResponse;
     } catch (error) {
       print('카카오계정으로 로그인 실패: $error');
-      return null; // 로그인 실패 시 null 반환
+      return null;
     }
   }
 }

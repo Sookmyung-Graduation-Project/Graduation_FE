@@ -1,10 +1,12 @@
 class UserResponse {
   final String userId;
   final String nickname;
+  final String profileImage;
 
   UserResponse({
     required this.userId,
     required this.nickname,
+    required this.profileImage,
   });
 
   // JSON을 Dart 객체로 변환
@@ -12,6 +14,8 @@ class UserResponse {
     return UserResponse(
       userId: json['user_id'],
       nickname: json['nickname'],
+      profileImage:
+          json['profile_image'] ?? '', // profile_image가 없을 경우 빈 문자열로 처리
     );
   }
 
@@ -20,6 +24,7 @@ class UserResponse {
     return {
       'user_id': userId,
       'nickname': nickname,
+      'profile_image': profileImage,
     };
   }
 }

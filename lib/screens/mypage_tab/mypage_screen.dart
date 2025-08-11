@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:phonics/core/provider/login_provider.dart';
-import 'package:phonics/screens/mypage_tab/mypage_to_deleteaccount.dart';
+import 'package:phonics/core/router/routes.dart';
 import 'package:phonics/screens/mypage_tab/mypage_to_notice.dart';
-import 'package:phonics/screens/mypage_tab/mypage_to_voicesetting.dart';
-import 'package:phonics/screens/mypage_tab/mypage_to_favoritebooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class MypageScreen extends ConsumerStatefulWidget {
@@ -39,6 +38,11 @@ class _MypageScreenState extends ConsumerState<MypageScreen>
     _toggleController.dispose();
     _inputController.dispose();
     super.dispose();
+  }
+
+  void _logout() {
+    ref.read(userResponseProvider.notifier).logout();
+    context.go(Routes.login);
   }
 
   @override
@@ -85,9 +89,9 @@ class _MypageScreenState extends ConsumerState<MypageScreen>
               child: Column(
                 children: [
                   const SizedBox(height: 50),
-                  _buildMenuSection(),
-                  _buildMenuSection2(),
-                  const SizedBox(height: 100),
+                  _buildMenuSectionService(),
+                  _buildMenuSectionSettings(),
+                  const SizedBox(height: 150),
                 ],
               ),
             ),
@@ -104,7 +108,7 @@ class _MypageScreenState extends ConsumerState<MypageScreen>
     );
   }
 
-  Widget _buildMenuSection() {
+  Widget _buildMenuSectionService() {
     double screenWidth = MediaQuery.of(context).size.width;
     double sectionWidth = screenWidth * 0.89722222222;
 
@@ -126,21 +130,13 @@ class _MypageScreenState extends ConsumerState<MypageScreen>
             _buildMenuItem(
               '음성세팅',
               () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const MypageToVoicesetting()),
-                );
+                context.go('${Routes.myPage}/${Routes.voiceSetting}');
               },
             ),
             _buildMenuItem(
               '찜한 책 목록',
               () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const MypageToFavoritebooks()),
-                );
+                context.go('${Routes.myPage}/${Routes.MypageToFavoritebooks}');
               },
             ),
           ],
@@ -149,7 +145,7 @@ class _MypageScreenState extends ConsumerState<MypageScreen>
     );
   }
 
-  Widget _buildMenuSection2() {
+  Widget _buildMenuSectionSettings() {
     double screenWidth = MediaQuery.of(context).size.width;
     double sectionWidth = screenWidth * 0.89722222222;
 
@@ -181,21 +177,13 @@ class _MypageScreenState extends ConsumerState<MypageScreen>
             _buildMenuItem(
               '탈퇴하기',
               () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const MypageToDeleteaccount()),
-                );
+                context.go('${Routes.myPage}/${Routes.MypageToDeleteaccount}');
               },
             ),
             _buildMenuItem(
               '로그아웃',
               () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const MypageToDeleteaccount()),
-                );
+                _logout();
               },
             ),
           ],
@@ -206,9 +194,10 @@ class _MypageScreenState extends ConsumerState<MypageScreen>
 
   Widget buildProfileContainer() {
     final userResponse = ref.watch(userResponseProvider);
+    print(userResponse?.profileImage);
     double screenWidth = MediaQuery.of(context).size.width;
     double containerHeight = screenWidth * 0.69444444444;
-    double profileDiameter = screenWidth * 0.25;
+    double profileDiameter = 70;
 
     return Stack(
       children: [
@@ -223,11 +212,23 @@ class _MypageScreenState extends ConsumerState<MypageScreen>
             child: Row(
               children: [
                 const SizedBox(width: 20),
-                Image.asset(
-                  'assets/images/mypage/mypage_profile_mother.png',
-                  width: profileDiameter,
-                  height: profileDiameter,
-                ),
+                userResponse?.profileImage != null
+                    ? Container(
+                        decoration: BoxDecoration(shape: BoxShape.circle),
+                        child: ClipOval(
+                          child: Image.network(
+                            userResponse!.profileImage,
+                            width: profileDiameter,
+                            height: profileDiameter,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      )
+                    : Image.asset(
+                        'assets/images/mypage/default_profile_image.png',
+                        width: profileDiameter,
+                        height: profileDiameter,
+                      ),
                 const SizedBox(width: 16),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
