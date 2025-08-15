@@ -13,6 +13,6 @@ class Routes {
   static const String quizDetail = 'quizDetail';
   //myPage routes
   static const String voiceSetting = 'voiceSetting';
-  static const String MypageToFavoritebooks = 'MypageToFavoritebooks';
-  static const String MypageToDeleteaccount = 'MypageToDeleteaccount';
+  static const String mypageToFavoritebooks = 'mypageToFavoritebooks';
+  static const String mypageToDeleteaccount = 'mypageToDeleteaccount';
 }

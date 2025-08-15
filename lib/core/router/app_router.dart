@@ -103,15 +103,15 @@ final GoRouter appRouter = GoRouter(
                 builder: (context, state) => const MypageToVoicesetting(),
               ),
               GoRoute(
-                path: Routes.MypageToFavoritebooks,
+                path: Routes.mypageToFavoritebooks,
                 builder: (context, state) => const MypageToFavoritebooks(),
               ),
               GoRoute(
-                path: Routes.MypageToFavoritebooks,
+                path: Routes.mypageToFavoritebooks,
                 builder: (context, state) => const MypageToFavoritebooks(),
               ),
               GoRoute(
-                path: Routes.MypageToDeleteaccount,
+                path: Routes.mypageToDeleteaccount,
                 builder: (context, state) => const MypageToDeleteaccount(),
               ),
             ]),
