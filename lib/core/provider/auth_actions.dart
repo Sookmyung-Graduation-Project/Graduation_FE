@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> signInWithKakao(WidgetRef ref) async {
   final kakao = KakaoLoginApi();
-  final result = await kakao.signWithKakao(); // Future<KakaoLoginResult?>
+  final result = await kakao.signWithKakao();
   if (result == null) {
     if (kDebugMode) debugPrint('[auth] Kakao login canceled/failed');
     throw Exception('Kakao login canceled/failed');

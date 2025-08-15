@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:phonics/core/provider/login_provider.dart';
 import 'package:phonics/core/provider/user_info_provider.dart';
+import 'package:phonics/core/provider/voice_provider.dart';
 import 'package:phonics/core/router/routes.dart';
 import 'package:phonics/core/utils/kakao_login.dart';
 
@@ -28,6 +29,9 @@ class LoginScreen extends ConsumerWidget {
                     if (result != null) {
                       ref.read(userResponseProvider.notifier).state =
                           result.userResponse;
+
+                      ref.read(voicesProvider.notifier).state = result.voices;
+
                       ref.read(serverUserProvider.notifier).state =
                           result.userInfo;
 
