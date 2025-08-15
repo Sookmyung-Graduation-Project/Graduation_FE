@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:phonics/core/provider/login_provider.dart';
+import 'package:phonics/core/provider/auth_actions.dart';
+import 'package:phonics/core/provider/user_info_provider.dart';
 import 'package:phonics/core/router/routes.dart';
 import 'package:phonics/screens/mypage_tab/mypage_to_notice.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -41,8 +42,7 @@ class _MypageScreenState extends ConsumerState<MypageScreen>
   }
 
   void _logout() {
-    ref.read(userResponseProvider.notifier).logout();
-    context.go(Routes.login);
+    logoutAll(ref);
   }
 
   @override
@@ -136,7 +136,7 @@ class _MypageScreenState extends ConsumerState<MypageScreen>
             _buildMenuItem(
               '찜한 책 목록',
               () {
-                context.go('${Routes.myPage}/${Routes.MypageToFavoritebooks}');
+                context.go('${Routes.myPage}/${Routes.mypageToFavoritebooks}');
               },
             ),
           ],
@@ -177,7 +177,7 @@ class _MypageScreenState extends ConsumerState<MypageScreen>
             _buildMenuItem(
               '탈퇴하기',
               () {
-                context.go('${Routes.myPage}/${Routes.MypageToDeleteaccount}');
+                context.go('${Routes.myPage}/${Routes.mypageToDeleteaccount}');
               },
             ),
             _buildMenuItem(
@@ -193,8 +193,11 @@ class _MypageScreenState extends ConsumerState<MypageScreen>
   }
 
   Widget buildProfileContainer() {
-    final userResponse = ref.watch(userResponseProvider);
-    print(userResponse?.profileImage);
+    final userInfo = ref.watch(serverUserProvider);
+    if (userInfo == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    print('마이페이지: ${userInfo.profileImage}');
     double screenWidth = MediaQuery.of(context).size.width;
     double containerHeight = screenWidth * 0.69444444444;
     double profileDiameter = 70;
@@ -212,12 +215,12 @@ class _MypageScreenState extends ConsumerState<MypageScreen>
             child: Row(
               children: [
                 const SizedBox(width: 20),
-                userResponse?.profileImage != null
+                userInfo.profileImage != null
                     ? Container(
                         decoration: BoxDecoration(shape: BoxShape.circle),
                         child: ClipOval(
                           child: Image.network(
-                            userResponse!.profileImage,
+                            userInfo.profileImage ?? '',
                             width: profileDiameter,
                             height: profileDiameter,
                             fit: BoxFit.cover,
@@ -225,7 +228,7 @@ class _MypageScreenState extends ConsumerState<MypageScreen>
                         ),
                       )
                     : Image.asset(
-                        'assets/images/mypage/default_profile_image.png',
+                        'assets/images/mypage/mypage_profile_mother.png',
                         width: profileDiameter,
                         height: profileDiameter,
                       ),
@@ -235,7 +238,7 @@ class _MypageScreenState extends ConsumerState<MypageScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '${userResponse?.nickname ?? 'Real Name'} 님',
+                      '${userInfo.nickname ?? 'Real Name'} 님',
                       style: TextStyle(
                         fontFamily: 'GyeonggiTitleVBold',
                         fontSize: 20,
@@ -245,7 +248,7 @@ class _MypageScreenState extends ConsumerState<MypageScreen>
                     ),
                     SizedBox(height: 4),
                     Text(
-                      '학부모 / 자녀 ',
+                      userInfo.userRole == 'parent' ? '학부모' : '자녀',
                       style: TextStyle(
                         fontFamily: 'GyeonggiTitleLight',
                         fontSize: 14,

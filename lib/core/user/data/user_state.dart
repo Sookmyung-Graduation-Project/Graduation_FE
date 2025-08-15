@@ -1,3 +1,4 @@
+//로그인 후, 필수 사용자 정보 저장하는 모델
 class UserResponse {
   final String accessToken;
   final String userId;

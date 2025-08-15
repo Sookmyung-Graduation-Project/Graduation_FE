@@ -1,3 +1,4 @@
+// User정보 조회를 위한 모델
 class UserInfo {
   String id;
   String provider;
