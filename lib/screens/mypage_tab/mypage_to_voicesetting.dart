@@ -41,7 +41,13 @@ class DefaultVoiceSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final defaultId = ref.watch(defaultVoiceIdProvider);
+    final voices = ref.watch(voicesProvider);
+
+    // default_id가 true인 음성 찾기
+    final defaultVoice = voices.firstWhere(
+      (v) => v.defaultId == true,
+    );
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -54,17 +60,37 @@ class DefaultVoiceSection extends ConsumerWidget {
             color: Color(0xff525152),
           ),
         ),
-        if (defaultId == null)
-          Container(
-            padding: const EdgeInsets.all(16),
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: const Color(0xffA5A5A5), width: 0.2),
-            ),
-            child: const Text('등록된 커스텀 음성이 없습니다.'),
+        Container(
+          padding: const EdgeInsets.all(16),
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: const Color(0xffA5A5A5), width: 0.2),
           ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Color(0xffFAC632),
+                ),
+                child: const Icon(Icons.check, color: Colors.white, size: 20),
+              ),
+              const SizedBox(width: 20),
+              Text(
+                defaultVoice.voiceName,
+                style: const TextStyle(
+                  fontFamily: 'GyeonggiTitleLight',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w300,
+                  color: Color(0xff525152),
+                ),
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }

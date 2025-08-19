@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phonics/core/provider/auth_actions.dart';
 import 'package:phonics/core/provider/user_info_provider.dart';
+import 'package:phonics/core/provider/voice_provider.dart';
 import 'package:phonics/core/router/routes.dart';
 import 'package:phonics/screens/mypage_tab/mypage_to_notice.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MypageScreen extends ConsumerStatefulWidget {
   const MypageScreen({super.key});
@@ -129,7 +131,11 @@ class _MypageScreenState extends ConsumerState<MypageScreen>
             const SizedBox(height: 10),
             _buildMenuItem(
               '음성세팅',
-              () {
+              () async {
+                final prefs = await SharedPreferences.getInstance();
+                final jwt = prefs.getString('access_token');
+
+                await ref.read(voicesProvider.notifier).fetchVoices(jwt!);
                 context.go('${Routes.myPage}/${Routes.voiceSetting}');
               },
             ),
