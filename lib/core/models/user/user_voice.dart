@@ -1,8 +1,7 @@
-// lib/phonics/core/user/data/user_voice.dart
 class VoiceItem {
-  final String id; // "_id"
-  final String voiceName; // "voice_name"
-  final String voiceId; // "voice_id" (ElevenLabs)
+  final String id;
+  final String voiceName;
+  final String voiceId;
   final String? description;
   final DateTime? createdAt;
   final bool defaultId;

@@ -1,10 +1,10 @@
-class DefaultVoice {
+class DeleteVoice {
   final String voiceId;
 
-  DefaultVoice({required this.voiceId});
+  DeleteVoice({required this.voiceId});
 
-  factory DefaultVoice.fromJson(Map<String, dynamic> json) {
-    return DefaultVoice(
+  factory DeleteVoice.fromJson(Map<String, dynamic> json) {
+    return DeleteVoice(
       voiceId: json['voice_id'] as String? ?? '',
     );
   }
