@@ -1,7 +1,7 @@
 // lib/core/user/data/kakao_login_result.dart
-import 'package:phonics/core/user/data/user_info.dart';
-import 'package:phonics/core/user/data/user_state.dart';
-import 'package:phonics/core/user/data/user_voice.dart';
+import 'package:phonics/core/models/user/user_info.dart';
+import 'package:phonics/core/models/user/user_state.dart';
+import 'package:phonics/core/models/user/user_voice.dart';
 
 class KakaoLoginResult {
   final UserResponse userResponse;

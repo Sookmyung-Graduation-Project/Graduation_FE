@@ -1,4 +1,4 @@
-import 'package:phonics/core/user/data/user_state.dart';
+import 'package:phonics/core/models/user/user_state.dart';
 
 class LoginResponse {
   final String accessToken;

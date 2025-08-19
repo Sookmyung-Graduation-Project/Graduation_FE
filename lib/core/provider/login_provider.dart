@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:phonics/core/user/data/user_state.dart';
+import 'package:phonics/core/models/user/user_state.dart';
 // KakaoLoginApi
 
 // 로그인 후 반환된 UserResponse 모델을 관리하는 Provider

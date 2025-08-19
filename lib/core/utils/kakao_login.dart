@@ -1,9 +1,9 @@
 import 'package:flutter/services.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
-import 'package:phonics/core/user/data/kakao_login_result.dart';
-import 'package:phonics/core/user/data/user_info.dart';
-import 'package:phonics/core/user/data/user_state.dart';
-import 'package:phonics/core/user/data/user_voice.dart';
+import 'package:phonics/core/models/user/kakao_login_result.dart';
+import 'package:phonics/core/models/user/user_info.dart';
+import 'package:phonics/core/models/user/user_state.dart';
+import 'package:phonics/core/models/user/user_voice.dart';
 import 'package:phonics/core/utils/api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

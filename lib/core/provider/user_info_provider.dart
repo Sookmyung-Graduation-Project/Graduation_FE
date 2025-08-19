@@ -1,6 +1,6 @@
 // lib/core/provider/user_info_provider.dart
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:phonics/core/user/data/user_info.dart';
+import 'package:phonics/core/models/user/user_info.dart';
 
 final serverUserProvider = StateNotifierProvider<ServerUserNotifier, UserInfo?>(
   (ref) => ServerUserNotifier(),
