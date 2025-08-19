@@ -7,6 +7,8 @@ import 'package:intl/intl.dart';
 import 'package:phonics/core/user/data/user_voice.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:phonics/core/utils/api_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MypageToVoicesetting extends ConsumerWidget {
   const MypageToVoicesetting({super.key});
@@ -230,17 +232,6 @@ class AddVoiceButton extends ConsumerWidget {
     }
   }
 
-  Future<void> _uploadIvc({
-    required String jwt,
-    required String name,
-    String? description,
-    required List<String> filePaths,
-  }) async {
-    // TODO: ApiService에 IVC 업로드 함수 만들었다면 그걸 호출
-    // await ApiService.uploadIvc(jwt: jwt, name: name, description: description, filePaths: filePaths);
-    // 여기서는 틀만 남겨둡니다.
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return GestureDetector(
@@ -276,23 +267,27 @@ class AddVoiceButton extends ConsumerWidget {
             );
             return;
           }
+          final prefs = await SharedPreferences.getInstance();
+          final jwt = prefs.getString('access_token');
 
-          // TODO: JWT 불러오기 (예: SharedPreferences)
-          // final prefs = await SharedPreferences.getInstance();
-          // final jwt = prefs.getString('access_token');
-          // if (jwt == null) { ... return; }
+          // JWT가 없으면 경고 메시지 표시
+          if (jwt == null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('로그인 정보가 없습니다.')),
+            );
+            return;
+          }
 
           // 업로드 진행 (여기서는 샘플로 이름/설명 고정)
-          // await _uploadIvc(jwt: jwt, name: '새 음성', description: null, filePaths: [path]);
+          await ApiService.uploadIvc(
+              jwt: jwt, name: '새 음성', description: null, files: [path]);
 
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('파일 추가 완료! (1분 이하)')),
           );
 
-          // 업로드 성공 시 서버에서 목록을 다시 받아오거나,
-          // 새로 생성된 보이스를 providers에 append:
-          // final newVoice = VoiceItem(...); // 서버 응답 기반
-          // ref.read(voicesProvider.notifier).state = [...ref.read(voicesProvider), newVoice];
+          // 업로드 성공 시 서버에서 목록을 다시 받아오기
+          await ref.read(voicesProvider.notifier).fetchVoices(jwt);
         } catch (e) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('파일 선택/업로드 실패: $e')),

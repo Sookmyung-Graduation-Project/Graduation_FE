@@ -47,6 +47,46 @@ class ApiService {
     }
   }
 
+  // IVC 업로드
+  static Future<Map<String, dynamic>?> uploadIvc({
+    required String jwt,
+    required String name,
+    required List<String> files,
+    String? description,
+  }) async {
+    final url = Uri.parse(ApiUrls.uploadIvcUrl);
+    try {
+      final request = http.MultipartRequest('POST', url);
+      request.headers['Authorization'] = 'Bearer $jwt';
+
+      // 파일 리스트 멀티파트 필드로 추가
+      for (var path in files) {
+        final file = await http.MultipartFile.fromPath('files', path);
+        request.files.add(file);
+      }
+
+      // 추가 필드(name, description)
+      request.fields['name'] = name;
+      if (description != null) {
+        request.fields['description'] = description;
+      }
+
+      final streamedResponse = await request.send();
+
+      final response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        print('==IVC 업로드 실패== ${response.statusCode} ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      print('==IVC 업로드 실패== $e');
+      return null;
+    }
+  }
+
   // 내 음성 데이터 조회
   static Future<List<Map<String, dynamic>>?> fetchMyVoices({
     required String jwt,
