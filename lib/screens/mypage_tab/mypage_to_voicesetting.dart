@@ -191,32 +191,6 @@ class VoiceTile extends ConsumerWidget {
   }
 }
 
-class IconButton extends ConsumerWidget {
-  const IconButton({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return GestureDetector(
-      onTap: () {
-        // Handle tap
-      },
-      child: Container(
-        height: 30,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: Color(0xffFAC632),
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: const Color(0xffA5A5A5), width: 0.2),
-        ),
-        child: Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
-      ),
-    );
-  }
-}
-
 class AddVoiceButton extends ConsumerWidget {
   const AddVoiceButton({super.key});
 

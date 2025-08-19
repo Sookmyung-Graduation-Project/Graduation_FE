@@ -24,8 +24,7 @@ class LoginScreen extends ConsumerWidget {
                 // 카카오 로그인 버튼
                 TextButton(
                   onPressed: () async {
-                    final result = await KakaoLoginApi()
-                        .signWithKakao(); // KakaoLoginResult?
+                    final result = await KakaoLoginApi().signWithKakao();
                     if (result != null) {
                       ref.read(userResponseProvider.notifier).state =
                           result.userResponse;
