@@ -7,4 +7,5 @@ class ApiUrls {
   static final String updateDefaultVoiceUrl = '$baseUrl/voice/default';
   static final String renameVoiceUrl = '$baseUrl/voice/name';
   static final String deleteVoiceUrl = '$baseUrl/voice/delete';
+  static final String testVoiceUrl = '$baseUrl/voice/tts/test';
 }

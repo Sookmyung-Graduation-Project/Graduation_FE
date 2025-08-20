@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -236,6 +237,37 @@ class ApiService {
       }
     } catch (e) {
       print('==음성 이름 변경 실패== $e');
+      return null;
+    }
+  }
+
+  static Future<Uint8List?> testTTSVoice({
+    required String jwt,
+    required String voiceId,
+    required String text,
+  }) async {
+    final url = Uri.parse(ApiUrls.testVoiceUrl);
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $jwt',
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: {
+          'voice_id': voiceId,
+          'text': text,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return response.bodyBytes; // 바이너리 오디오 데이터 반환
+      } else {
+        print('==TTS 실패== ${response.statusCode} ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      print('==TTS 실패== $e');
       return null;
     }
   }

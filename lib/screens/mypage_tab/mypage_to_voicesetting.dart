@@ -8,6 +8,7 @@ import 'package:phonics/core/models/user/user_voice.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:phonics/core/utils/api_service.dart';
+import 'package:phonics/core/utils/test_voice_service.dart';
 import 'package:phonics/widgets/show_rename_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -175,7 +176,7 @@ class VoiceTile extends ConsumerWidget {
   final VoiceItem item;
   final bool isDefault;
 
-  final List<String> menu = ['음성 이름 변경', '기본 음성으로 변경', '음성 삭제'];
+  final List<String> menu = ['음성 이름 변경', '기본 음성으로 변경', '음성 테스트', '음성 삭제'];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -339,6 +340,45 @@ class VoiceTile extends ConsumerWidget {
                           : '응답 형식 오류';
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('삭제 실패: $errorMsg')),
+                      );
+                    }
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('오류 발생: $e')),
+                    );
+                  }
+                } else if (value == '음성 테스트') {
+                  final prefs = await SharedPreferences.getInstance();
+                  final jwt = prefs.getString('access_token');
+                  if (jwt == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('로그인 정보가 없습니다.')),
+                    );
+                    return;
+                  }
+                  try {
+                    final audioData = await ApiService.testTTSVoice(
+                      jwt: jwt,
+                      voiceId: item.voiceId,
+                      text: '테스트 음성입니다.',
+                    );
+                    if (audioData != null) {
+                      final testVoiceService = TestVoiceService();
+                      final filePath =
+                          await testVoiceService.saveAudioToFile(audioData);
+                      if (filePath != null) {
+                        await testVoiceService.playAudioFromFile(filePath);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('음성 테스트 완료!')),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('음성 파일 저장 실패')),
+                        );
+                      }
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('음성 데이터가 없습니다')),
                       );
                     }
                   } catch (e) {
