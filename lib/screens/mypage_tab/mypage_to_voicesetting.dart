@@ -11,11 +11,6 @@ import 'package:phonics/core/utils/api_service.dart';
 import 'package:phonics/widgets/show_rename_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final List<String> menu = [
-  '음성 이름 변경',
-  '기본 음성으로 변경',
-];
-
 class MypageToVoicesetting extends ConsumerWidget {
   const MypageToVoicesetting({super.key});
 
@@ -36,6 +31,7 @@ class MypageToVoicesetting extends ConsumerWidget {
                 DefaultVoiceSection(),
                 SizedBox(height: 20),
                 CustomVoiceSection(),
+                SizedBox(height: 20),
                 AddVoiceButton()
               ],
             ),
@@ -53,6 +49,14 @@ class DefaultVoiceSection extends ConsumerWidget {
 
     final defaultVoice = voices.firstWhere(
       (v) => v.defaultId == true,
+      orElse: () => VoiceItem(
+        id: '',
+        voiceName: '기본 음성이 없습니다.',
+        voiceId: '',
+        description: null,
+        createdAt: null,
+        defaultId: false,
+      ),
     );
 
     return Column(
@@ -128,28 +132,38 @@ class CustomVoiceSection extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: 8),
-        if (voices.isEmpty)
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: const Color(0xffA5A5A5), width: 0.2),
-            ),
-            child: const Text('등록된 커스텀 음성이 없습니다.'),
-          )
-        else
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: voices.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 10),
-            itemBuilder: (context, index) {
-              final v = voices[index];
-              final isDefault = (defaultId != null && defaultId == v.id);
-              return VoiceTile(item: v, isDefault: isDefault);
-            },
-          ),
+        voices.isEmpty
+            ? Container(
+                alignment: Alignment.centerLeft,
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  border:
+                      Border.all(color: const Color(0xffA5A5A5), width: 0.2),
+                ),
+                child: const Text(
+                  '등록된 커스텀 음성이 없습니다.',
+                  style: TextStyle(
+                    fontFamily: 'GyeonggiTitleLight',
+                    fontSize: 14,
+                    color: Color(0xff525152),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              )
+            : Column(
+                children: voices
+                    .map((v) => Padding(
+                          padding: const EdgeInsets.only(bottom: 8.0),
+                          child: VoiceTile(
+                            item: v,
+                            isDefault: v.voiceId == defaultId,
+                          ),
+                        ))
+                    .toList(),
+              ),
       ],
     );
   }
@@ -161,10 +175,7 @@ class VoiceTile extends ConsumerWidget {
   final VoiceItem item;
   final bool isDefault;
 
-  final List<String> menu = [
-    '음성 이름 변경',
-    '기본 음성으로 변경',
-  ];
+  final List<String> menu = ['음성 이름 변경', '기본 음성으로 변경', '음성 삭제'];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -302,6 +313,38 @@ class VoiceTile extends ConsumerWidget {
                         SnackBar(content: Text('오류 발생: $e')),
                       );
                     }
+                  }
+                } else if (value == '음성 삭제') {
+                  final prefs = await SharedPreferences.getInstance();
+                  final jwt = prefs.getString('access_token');
+                  if (jwt == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('로그인 정보가 없습니다.')),
+                    );
+                    return;
+                  }
+                  try {
+                    final res = await ApiService.deleteVoice(
+                      jwt: jwt,
+                      voiceId: item.voiceId,
+                    );
+                    if (res != null && res['ok'] == true) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('음성이 삭제되었습니다.')),
+                      );
+                      await ref.read(voicesProvider.notifier).fetchVoices(jwt);
+                    } else {
+                      final errorMsg = (res != null)
+                          ? res['error'] ?? '알 수 없는 오류'
+                          : '응답 형식 오류';
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('삭제 실패: $errorMsg')),
+                      );
+                    }
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('오류 발생: $e')),
+                    );
                   }
                 }
               },

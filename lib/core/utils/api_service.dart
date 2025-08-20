@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:phonics/core/const/api_urls.dart';
-import 'package:phonics/core/models/voice/rename_voice.dart';
 
 class ApiService {
   // 로그인 시 토큰을 백엔드로 전송
@@ -179,6 +178,30 @@ class ApiService {
       }
     } catch (e) {
       print('==기본 음성 설정 실패== $e');
+      return null;
+    }
+  }
+
+  static deleteVoice({required String jwt, required String voiceId}) async {
+    final url = Uri.parse(ApiUrls.deleteVoiceUrl);
+    final body = json.encode({'voice_id': voiceId});
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $jwt',
+          'Content-Type': 'application/json',
+        },
+        body: body,
+      );
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        print('==음성 삭제 실패== ${response.statusCode} ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      print('==음성 삭제 실패== $e');
       return null;
     }
   }
