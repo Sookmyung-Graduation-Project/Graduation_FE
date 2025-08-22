@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:go_router/go_router.dart';
 import 'package:phonics/widgets/basic_lg_button_for_text.dart';
 
 class MypageToDeleteaccount extends StatefulWidget {
@@ -60,7 +61,7 @@ class _MypageToDeleteaccountState extends State<MypageToDeleteaccount> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 ElevatedButton(
-                  onPressed: () => Navigator.of(context).pop(),
+                  onPressed: () => context.pop(),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent, // 배경 투명
                     elevation: 0, // 그림자 제거
@@ -123,7 +124,7 @@ class _MypageToDeleteaccountState extends State<MypageToDeleteaccount> {
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () => Navigator.of(context).pop(),
+                    onPressed: () => context.pop(),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.grey[300],
                       foregroundColor: Colors.black,
@@ -146,6 +147,7 @@ class _MypageToDeleteaccountState extends State<MypageToDeleteaccount> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
+                      context.pop();
                       showDialog(
                         context: context,
                         barrierDismissible: false,

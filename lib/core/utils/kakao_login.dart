@@ -1,47 +1,86 @@
 import 'package:flutter/services.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
-import 'package:phonics/core/user/data/user_state.dart';
+import 'package:phonics/core/models/user/kakao_login_result.dart';
+import 'package:phonics/core/models/user/user_info.dart';
+import 'package:phonics/core/models/user/user_state.dart';
+import 'package:phonics/core/models/user/user_voice.dart';
 import 'package:phonics/core/utils/api_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class KakaoLoginApi {
-  Future<UserResponse?> signWithKakao() async {
+  Future<KakaoLoginResult?> signWithKakao() async {
     try {
       OAuthToken token;
+
+      // 1) 카카오 로그인
       if (await isKakaoTalkInstalled()) {
         try {
           token = await UserApi.instance.loginWithKakaoTalk();
         } catch (error) {
-          print('카카오톡으로 로그인 실패 $error');
-
-          if (error is PlatformException && error.code == 'CANCELED') {
+          print('카카오톡 로그인 실패: $error');
+          if (error is PlatformException && error.code == 'CANCELED')
             return null;
-          }
-
           token = await UserApi.instance.loginWithKakaoAccount();
         }
       } else {
         token = await UserApi.instance.loginWithKakaoAccount();
       }
 
-      print('AccessToken: ${token.accessToken}');
-      print('RefreshToken: ${token.refreshToken}');
+      // 2) 백엔드 로그인 (JWT)
+      final login = await ApiService.sendTokenToBackend(
+        accessToken: token.accessToken,
+        provider: 'kakao',
+      );
+      print('==로그인 응답== $login');
+      final jwt = login['access_token'] as String;
 
-      await ApiService.sendTokenToBackend(token.accessToken, 'kakao');
+      // 3) 토큰 저장
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('access_token', jwt);
 
-      // 카카오 로그인 후 사용자 정보 가져오기
-      User user = await UserApi.instance.me();
+      // 4) 내 정보
+      final meJson = await ApiService.fetchMyInfo(jwt: jwt);
+      if (meJson == null) throw Exception("fetchMyInfo returned null");
+      final me = UserInfo.fromJson(meJson);
 
-      // User 객체 -> UserResponse로 변환하여 반환
-      UserResponse userResponse = UserResponse(
-        userId: user.id.toString(),
-        nickname: user.properties?['nickname'] ?? 'No Name',
+      // 5) 내 보이스 목록 (실패해도 로그인은 계속)
+      final getVoices = await ApiService.fetchMyVoices(jwt: jwt);
+      final List<VoiceItem> voices = (getVoices ?? [])
+          .map<VoiceItem>(
+              (e) => VoiceItem.fromJson(Map<String, dynamic>.from(e)))
+          .toList(growable: false);
+      print('==보이스 목록== ${voices.length}개');
+
+      // 6) 기본 보이스 로컬 저장
+      final defaultVoiceDocId = meJson['default_voice_id'] as String?;
+      if (defaultVoiceDocId != null && defaultVoiceDocId.isNotEmpty) {
+        await prefs.setString('selected_voice_doc_id', defaultVoiceDocId);
+      } else if (voices.isNotEmpty) {
+        await prefs.setString('selected_voice_doc_id', voices.first.id);
+      }
+
+      // 7) 카카오 프로필 (UI용)
+      final kakaoUser = await UserApi.instance.me();
+
+      final userResponse = UserResponse(
+        userId: kakaoUser.id.toString(),
+        nickname: kakaoUser.properties?['nickname'] ?? 'No Name',
+        profileImage: kakaoUser.properties?['profile_image'] ?? '',
+        accessToken: jwt,
       );
 
-      print('로그인 성공: ${userResponse.nickname}, UserId: ${userResponse.userId}');
-      return userResponse; // UserResponse 객체 반환
+      print('==로그인 성공== ${userResponse.nickname}');
+      print('==유저 정보== ${me.nickname} / ${me.id} / provider=${me.provider}');
+
+      return KakaoLoginResult(
+        userResponse: userResponse,
+        userInfo: me,
+        voices: voices,
+        defaultVoiceDocId: defaultVoiceDocId,
+      );
     } catch (error) {
       print('카카오계정으로 로그인 실패: $error');
-      return null; // 로그인 실패 시 null 반환
+      return null;
     }
   }
 }

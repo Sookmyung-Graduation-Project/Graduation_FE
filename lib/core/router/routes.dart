@@ -6,8 +6,14 @@ class Routes {
   static const String myPage = '/myPage';
   static const String bookCreation = '/bookCreation';
 
+  //Study routes
   static const String quiz = 'quiz';
   static const String phonics = 'phonics';
   static const String quizMenu = 'quizMenu';
   static const String quizDetail = 'quizDetail';
+
+  //myPage routes
+  static const String voiceSetting = 'voiceSetting';
+  static const String mypageToFavoritebooks = 'mypageToFavoritebooks';
+  static const String mypageToDeleteaccount = 'mypageToDeleteaccount';
 }

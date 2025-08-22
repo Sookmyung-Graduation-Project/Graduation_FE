@@ -1,292 +1,490 @@
-import 'package:flutter/material.dart';
-import '../../widgets/mypage_audio_card.dart'; // AudioCard(title: , date: ) 구조로 되어 있어야 함
-import 'package:flutter_sound/flutter_sound.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:audio_session/audio_session.dart';
+import 'dart:io';
 
-class MypageToVoicesetting extends StatefulWidget {
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+import 'package:phonics/core/provider/voice_provider.dart';
+import 'package:phonics/core/models/user/user_voice.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:phonics/core/utils/api_service.dart';
+import 'package:phonics/core/utils/test_voice_service.dart';
+import 'package:phonics/widgets/show_rename_dialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class MypageToVoicesetting extends ConsumerWidget {
   const MypageToVoicesetting({super.key});
 
   @override
-  State<MypageToVoicesetting> createState() => _MypageToVoicesettingState();
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Scaffold(
+        backgroundColor: Color(0xffFFFFEB),
+        appBar: AppBar(
+          title: Text('음성세팅'),
+          backgroundColor: Color(0xffFFFFEB),
+        ),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                DefaultVoiceSection(),
+                SizedBox(height: 20),
+                CustomVoiceSection(),
+                SizedBox(height: 20),
+                AddVoiceButton()
+              ],
+            ),
+          ),
+        ));
+  }
 }
 
-class _MypageToVoicesettingState extends State<MypageToVoicesetting> {
-  final FlutterSoundRecorder _recorder = FlutterSoundRecorder();
-  final FlutterSoundPlayer _player = FlutterSoundPlayer();
-  bool _isPlaying = false;
-
-  bool _isRecording = false;
-  String? _filePath;
-
-  List<Map<String, String>> recordings = [
-    {"title": "새로운 음성 녹음", "date": "2025.05.05"},
-    {"title": "영어 단어 테스트", "date": "2025.05.03"},
-  ];
+class DefaultVoiceSection extends ConsumerWidget {
+  const DefaultVoiceSection({super.key});
 
   @override
-  void initState() {
-    super.initState();
-    _initRecorder();
-    _player.openPlayer();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final voices = ref.watch(voicesProvider);
 
-    AudioSession.instance.then((session) {
-      session.configure(AudioSessionConfiguration(
-        avAudioSessionCategory: AVAudioSessionCategory.playAndRecord,
-        avAudioSessionCategoryOptions:
-            AVAudioSessionCategoryOptions.allowBluetooth |
-                AVAudioSessionCategoryOptions.defaultToSpeaker,
-        avAudioSessionMode: AVAudioSessionMode.spokenAudio,
-        androidAudioAttributes: const AndroidAudioAttributes(
-          contentType: AndroidAudioContentType.speech,
-          usage: AndroidAudioUsage.voiceCommunication,
-        ),
-        androidAudioFocusGainType: AndroidAudioFocusGainType.gain,
-        androidWillPauseWhenDucked: true,
-      ));
-    });
-  }
+    final defaultVoice = voices.firstWhere(
+      (v) => v.defaultId == true,
+      orElse: () => VoiceItem(
+        id: '',
+        voiceName: '기본 음성이 없습니다.',
+        voiceId: '',
+        description: null,
+        createdAt: null,
+        defaultId: false,
+      ),
+    );
 
-  Future<void> _initRecorder() async {
-    await Permission.microphone.request();
-    await _recorder.openRecorder();
-  }
-
-  Future<void> _startRecording() async {
-    final dir = await getTemporaryDirectory();
-    final path =
-        '${dir.path}/recording_${DateTime.now().millisecondsSinceEpoch}.aac';
-
-    await _recorder.startRecorder(toFile: path, codec: Codec.aacADTS);
-    setState(() {
-      _isRecording = true;
-      _filePath = path;
-    });
-  }
-
-  Future<void> _stopRecording() async {
-    await _recorder.stopRecorder();
-
-    setState(() {
-      _isRecording = false;
-    });
-
-    // 녹음 완료 시 날짜 기록
-    final now = DateTime.now();
-    final formattedDate =
-        '${now.year}.${now.month.toString().padLeft(2, '0')}.${now.day.toString().padLeft(2, '0')}';
-
-    setState(() {
-      recordings.add({
-        "title": "새로운 녹음 ${recordings.length + 1}",
-        "date": formattedDate,
-      });
-    });
-
-    // 자동 재생 시작
-    if (_filePath != null) {
-      await _player.startPlayer(
-        fromURI: _filePath!,
-        whenFinished: () {
-          setState(() {
-            _isPlaying = false;
-          });
-        },
-      );
-      setState(() {
-        _isPlaying = true;
-      });
-    }
-
-    if (context.mounted) {
-      Navigator.of(context).pop(); // 바텀시트 닫기
-    }
-  }
-
-  void _showRecordingBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true, // 내용이 많을 경우 스크롤
-      backgroundColor: Colors.transparent, // 테두리 둥글게 보이게 하려면 transparent
-      builder: (_) {
-        return Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '기본 음성 데이터',
+          style: TextStyle(
+            fontFamily: 'GyeonggiTitleLight',
+            fontSize: 16,
+            fontWeight: FontWeight.w300,
+            color: Color(0xff525152),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+        ),
+        Container(
+          padding: const EdgeInsets.all(16),
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: const Color(0xffA5A5A5), width: 0.2),
+          ),
+          child: Row(
             children: [
-              // 빨간 안내창
               Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                padding: const EdgeInsets.all(10),
                 decoration: const BoxDecoration(
-                  color: Color(0xffEB4147),
+                  shape: BoxShape.circle,
+                  color: Color(0xffFAC632),
                 ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center, // 수직 정렬 중앙
-                  children: const [
-                    Icon(
-                      Icons.close,
-                      color: Colors.white,
-                    ),
-                    Expanded(
-                      child: Text(
-                        '최대 2분까지 녹음할 수 있습니다.',
-                        textAlign: TextAlign.center, // 텍스트 가운데 정렬
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'GyeonggiTitleLight',
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                child: const Icon(Icons.check, color: Colors.white, size: 20),
               ),
-
-              const SizedBox(height: 40),
-
-              // 마이크 버튼
-              GestureDetector(
-                onTap: () {
-                  _isRecording ? _stopRecording() : _startRecording();
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border:
-                        Border.all(color: const Color(0xffFAC632), width: 3),
-                  ),
-                  child: Icon(
-                    _isRecording ? Icons.stop : Icons.mic,
-                    size: 60,
-                    color: const Color(0xffFAC632),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
-              const Text(
-                '버튼을 눌러 녹음을 시작하세요.',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
+              const SizedBox(width: 20),
+              Text(
+                defaultVoice.voiceName,
+                style: const TextStyle(
                   fontFamily: 'GyeonggiTitleLight',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w300,
+                  color: Color(0xff525152),
                 ),
               ),
-              const SizedBox(height: 50),
             ],
           ),
-        );
-      },
+        ),
+      ],
     );
+  }
+}
+
+class CustomVoiceSection extends ConsumerWidget {
+  const CustomVoiceSection({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final voices = ref.watch(voicesProvider);
+    final defaultId = ref.watch(defaultVoiceIdProvider);
+    final loading = ref.watch(voicesLoadingProvider);
+
+    if (loading) {
+      return Center(child: CircularProgressIndicator());
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          '커스텀 음성 데이터',
+          style: TextStyle(
+            fontFamily: 'GyeonggiTitleLight',
+            fontSize: 16,
+            fontWeight: FontWeight.w300,
+            color: Color(0xff525152),
+          ),
+        ),
+        const SizedBox(height: 8),
+        voices.isEmpty
+            ? Container(
+                alignment: Alignment.centerLeft,
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  border:
+                      Border.all(color: const Color(0xffA5A5A5), width: 0.2),
+                ),
+                child: const Text(
+                  '등록된 커스텀 음성이 없습니다.',
+                  style: TextStyle(
+                    fontFamily: 'GyeonggiTitleLight',
+                    fontSize: 14,
+                    color: Color(0xff525152),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              )
+            : Column(
+                children: voices
+                    .map((v) => Padding(
+                          padding: const EdgeInsets.only(bottom: 8.0),
+                          child: VoiceTile(
+                            item: v,
+                            isDefault: v.voiceId == defaultId,
+                          ),
+                        ))
+                    .toList(),
+              ),
+      ],
+    );
+  }
+}
+
+class VoiceTile extends ConsumerWidget {
+  VoiceTile({super.key, required this.item, required this.isDefault});
+
+  final VoiceItem item;
+  final bool isDefault;
+
+  final List<String> menu = ['음성 이름 변경', '기본 음성으로 변경', '음성 테스트', '음성 삭제'];
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final createdText = item.createdAt != null
+        ? DateFormat('yyyy.MM.dd HH:mm').format(item.createdAt!)
+        : '-';
+
+    return GestureDetector(
+      onTap: () {},
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        height: 70,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xffA5A5A5), width: 0.2),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Color(0xffFAC632),
+              ),
+              child: const Icon(Icons.record_voice_over,
+                  color: Colors.white, size: 20),
+            ),
+            const SizedBox(width: 20),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          item.voiceName,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontFamily: 'GyeonggiTitleMedium',
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                      if (isDefault) ...[
+                        const SizedBox(width: 8),
+                        const Icon(Icons.check_circle,
+                            size: 16, color: Colors.green),
+                      ],
+                    ],
+                  ),
+                  Text(
+                    createdText,
+                    style: const TextStyle(
+                      fontFamily: 'GyeonggiTitleMedium',
+                      fontSize: 10,
+                      color: Color(0xff525152),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            DropdownButton<String>(
+              icon: const Icon(Icons.more_vert),
+              underline: SizedBox(),
+              dropdownColor: Colors.white,
+              onChanged: (value) async {
+                if (value == '기본 음성으로 변경') {
+                  final prefs = await SharedPreferences.getInstance();
+                  final jwt = prefs.getString('access_token');
+                  if (jwt == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('로그인 정보가 없습니다.')),
+                    );
+                    return;
+                  }
+                  try {
+                    final res = await ApiService.updateDefaultVoice(
+                      jwt: jwt,
+                      voiceId: item.voiceId,
+                    );
+                    if (res['ok'] == true) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('기본 음성으로 변경되었습니다.')),
+                      );
+                      await ref.read(voicesProvider.notifier).fetchVoices(jwt);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content:
+                                Text('변경 실패: ${res['error'] ?? '알 수 없는 오류'}')),
+                      );
+                    }
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('오류 발생: $e')),
+                    );
+                  }
+                } else if (value == '음성 이름 변경') {
+                  final newName = await showRenameVoiceDialog(context);
+                  if (newName != null && newName.isNotEmpty) {
+                    final prefs = await SharedPreferences.getInstance();
+                    final jwt = prefs.getString('access_token');
+                    if (jwt == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('로그인 정보가 없습니다.')),
+                      );
+                      return;
+                    }
+                    try {
+                      final res = await ApiService.renameVoice(
+                        jwt: jwt,
+                        voiceId: item.voiceId,
+                        newName: newName,
+                      );
+                      if (res != null && res['ok'] == true) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('음성 이름이 변경되었습니다.')),
+                        );
+                        await ref
+                            .read(voicesProvider.notifier)
+                            .fetchVoices(jwt);
+                      } else {
+                        final errorMsg = (res != null)
+                            ? res['error'] ?? '알 수 없는 오류'
+                            : '응답 형식 오류';
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('변경 실패: $errorMsg')),
+                        );
+                      }
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('오류 발생: $e')),
+                      );
+                    }
+                  }
+                } else if (value == '음성 삭제') {
+                  final prefs = await SharedPreferences.getInstance();
+                  final jwt = prefs.getString('access_token');
+                  if (jwt == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('로그인 정보가 없습니다.')),
+                    );
+                    return;
+                  }
+                  try {
+                    final res = await ApiService.deleteVoice(
+                      jwt: jwt,
+                      voiceId: item.voiceId,
+                    );
+                    if (res != null && res['ok'] == true) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('음성이 삭제되었습니다.')),
+                      );
+                      await ref.read(voicesProvider.notifier).fetchVoices(jwt);
+                    } else {
+                      final errorMsg = (res != null)
+                          ? res['error'] ?? '알 수 없는 오류'
+                          : '응답 형식 오류';
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('삭제 실패: $errorMsg')),
+                      );
+                    }
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('오류 발생: $e')),
+                    );
+                  }
+                } else if (value == '음성 테스트') {
+                  final prefs = await SharedPreferences.getInstance();
+                  final jwt = prefs.getString('access_token');
+                  if (jwt == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('로그인 정보가 없습니다.')),
+                    );
+                    return;
+                  }
+                  try {
+                    final audioData = await ApiService.testTTSVoice(
+                      jwt: jwt,
+                      voiceId: item.voiceId,
+                      text: '테스트 음성입니다.',
+                    );
+                    if (audioData != null) {
+                      final testVoiceService = TestVoiceService();
+                      final filePath =
+                          await testVoiceService.saveAudioToFile(audioData);
+                      if (filePath != null) {
+                        await testVoiceService.playAudioFromFile(filePath);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('음성 테스트 완료!')),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('음성 파일 저장 실패')),
+                        );
+                      }
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('음성 데이터가 없습니다')),
+                      );
+                    }
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('오류 발생: $e')),
+                    );
+                  }
+                }
+              },
+              items: menu
+                  .map((e) => DropdownMenuItem<String>(
+                        value: e,
+                        child: Text(e),
+                      ))
+                  .toList(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class AddVoiceButton extends ConsumerWidget {
+  const AddVoiceButton({super.key});
+
+  Future<Duration?> _getAudioDuration(String path) async {
+    final player = AudioPlayer();
+    try {
+      return await player.setFilePath(path);
+    } catch (e) {
+      debugPrint('duration 측정 실패: $e');
+      return null;
+    } finally {
+      await player.dispose();
+    }
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xffFFFFEB),
-      appBar: AppBar(
-        backgroundColor: const Color(0xffFFFFEB),
-        title: const Text(
-          '음성세팅',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
-            fontFamily: 'GyeonggiTitleBold',
-            color: Color(0xFF000000),
-          ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    return GestureDetector(
+      onTap: () async {
+        try {
+          final picked = await FilePicker.platform.pickFiles(
+            type: FileType.custom,
+            allowedExtensions: ['mp3', 'wav', 'm4a', 'aac', 'flac'],
+            allowMultiple: false,
+            withData: false,
+          );
+          if (picked == null) return;
+
+          final path = picked.files.single.path;
+          if (path == null || !File(path).existsSync()) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('파일 경로를 확인해 주세요.')),
+            );
+            return;
+          }
+
+          final dur = await _getAudioDuration(path);
+          if (dur == null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('오디오 길이를 확인할 수 없습니다.')),
+            );
+            return;
+          }
+          if (dur > const Duration(minutes: 1)) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                  content: Text('1분 이하 파일만 업로드 가능해요. (${dur.inSeconds}초)')),
+            );
+            return;
+          }
+          final prefs = await SharedPreferences.getInstance();
+          final jwt = prefs.getString('access_token');
+          if (jwt == null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('로그인 정보가 없습니다.')),
+            );
+            return;
+          }
+
+          await ApiService.uploadIvc(
+              jwt: jwt, name: '새 음성', description: null, files: [path]);
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('파일 추가 완료! (1분 이하)')),
+          );
+
+          await ref.read(voicesProvider.notifier).fetchVoices(jwt);
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('파일 선택/업로드 실패: $e')),
+          );
+        }
+      },
+      child: Container(
+        height: 44,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: const Color(0xffFAC632),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xffA5A5A5), width: 0.2),
         ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              '기존 음성 데이터',
-              style: TextStyle(
-                fontSize: 16,
-                fontFamily: 'GyeonggiTitleLight',
-                color: Color(0xFF000000),
-              ),
-            ),
-            const SizedBox(height: 10),
-            Expanded(
-              child: ListView.builder(
-                itemCount: recordings.length,
-                itemBuilder: (context, index) {
-                  final item = recordings[index];
-                  return Dismissible(
-                    key: Key(item['title']! + item['date']!),
-                    direction: DismissDirection.endToStart,
-                    background: Container(
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6),
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: const Color(0xffF9EBED),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: const [
-                          Icon(
-                            Icons.delete,
-                            color: Colors.redAccent,
-                          ),
-                        ],
-                      ),
-                    ),
-                    onDismissed: (direction) {
-                      setState(
-                        () {
-                          recordings.removeAt(index);
-                        },
-                      );
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('${item['title']}이(가) 삭제되었습니다')),
-                      );
-                    },
-                    child: AudioCard(
-                      title: item['title']!,
-                      date: item['date']!,
-                    ),
-                  );
-                },
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            SizedBox(
-              width: double.infinity, // 부모 너비만큼
-              child: ElevatedButton(
-                onPressed: () => _showRecordingBottomSheet(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xffFAC632),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 5), // 버튼 높이 조정 (옵션)
-                ),
-                child: const Icon(
-                  Icons.add,
-                  color: Colors.white,
-                  size: 40,
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 30,
-            ),
-          ],
+        child: const Center(
+          child: Icon(Icons.add, color: Colors.white),
         ),
       ),
     );

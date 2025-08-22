@@ -4,6 +4,9 @@ import 'package:phonics/core/screens/login_screen.dart';
 import 'package:phonics/screens/home.dart';
 import 'package:phonics/screens/library_tab/home_tab_screen.dart';
 import 'package:phonics/screens/mypage_tab/mypage_screen.dart';
+import 'package:phonics/screens/mypage_tab/mypage_to_deleteaccount.dart';
+import 'package:phonics/screens/mypage_tab/mypage_to_favoritebooks.dart';
+import 'package:phonics/screens/mypage_tab/mypage_to_voicesetting.dart';
 import 'package:phonics/screens/study_tab/phonics_menu.dart';
 import 'package:phonics/screens/study_tab/quiz_menu.dart';
 import 'package:phonics/screens/study_tab/study_tab.dart';
@@ -92,9 +95,26 @@ final GoRouter appRouter = GoRouter(
           builder: (context, state) => const HomeTabScreen(),
         ),
         GoRoute(
-          path: Routes.myPage,
-          builder: (context, state) => const MypageScreen(),
-        ),
+            path: Routes.myPage,
+            builder: (context, state) => const MypageScreen(),
+            routes: [
+              GoRoute(
+                path: Routes.voiceSetting,
+                builder: (context, state) => const MypageToVoicesetting(),
+              ),
+              GoRoute(
+                path: Routes.mypageToFavoritebooks,
+                builder: (context, state) => const MypageToFavoritebooks(),
+              ),
+              GoRoute(
+                path: Routes.mypageToFavoritebooks,
+                builder: (context, state) => const MypageToFavoritebooks(),
+              ),
+              GoRoute(
+                path: Routes.mypageToDeleteaccount,
+                builder: (context, state) => const MypageToDeleteaccount(),
+              ),
+            ]),
         GoRoute(
           path: Routes.bookCreation,
           builder: (context, state) => const CreateBookScreen(),

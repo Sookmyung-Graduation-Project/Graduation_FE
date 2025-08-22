@@ -1,21 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:phonics/core/user/data/user_state.dart';
-import 'package:phonics/core/utils/kakao_login.dart'; // KakaoLoginApi
+import 'package:phonics/core/models/user/user_state.dart';
+// KakaoLoginApi
 
 // 로그인 후 반환된 UserResponse 모델을 관리하는 Provider
-// nickname, userId
+// nickname, userId,
 final userResponseProvider =
-    StateNotifierProvider<UserResponseNotifier, UserResponse?>((ref) {
-  return UserResponseNotifier();
-});
+    StateNotifierProvider<UserResponseNotifier, UserResponse?>(
+  (ref) => UserResponseNotifier(),
+);
 
 class UserResponseNotifier extends StateNotifier<UserResponse?> {
   UserResponseNotifier() : super(null);
-
-  // 카카오 로그인 후 userResponse 상태 업데이트
-  Future<void> signInWithKakao() async {
-    final kakaoLoginApi = KakaoLoginApi();
-    final user = await kakaoLoginApi.signWithKakao();
-    state = user;
-  }
+  void set(UserResponse? v) => state = v;
+  void clear() => state = null;
 }

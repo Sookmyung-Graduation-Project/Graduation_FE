@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:phonics/core/provider/login_provider.dart';
-import 'package:phonics/screens/mypage_tab/mypage_to_deleteaccount.dart';
+import 'package:go_router/go_router.dart';
+import 'package:phonics/core/provider/auth_actions.dart';
+import 'package:phonics/core/provider/user_info_provider.dart';
+import 'package:phonics/core/provider/voice_provider.dart';
+import 'package:phonics/core/router/routes.dart';
 import 'package:phonics/screens/mypage_tab/mypage_to_notice.dart';
-import 'package:phonics/screens/mypage_tab/mypage_to_voicesetting.dart';
-import 'package:phonics/screens/mypage_tab/mypage_to_favoritebooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MypageScreen extends ConsumerStatefulWidget {
   const MypageScreen({super.key});
@@ -39,6 +41,10 @@ class _MypageScreenState extends ConsumerState<MypageScreen>
     _toggleController.dispose();
     _inputController.dispose();
     super.dispose();
+  }
+
+  void _logout() {
+    logoutAll(ref);
   }
 
   @override
@@ -85,9 +91,9 @@ class _MypageScreenState extends ConsumerState<MypageScreen>
               child: Column(
                 children: [
                   const SizedBox(height: 50),
-                  _buildMenuSection(),
-                  _buildMenuSection2(),
-                  const SizedBox(height: 100),
+                  _buildMenuSectionService(),
+                  _buildMenuSectionSettings(),
+                  const SizedBox(height: 150),
                 ],
               ),
             ),
@@ -104,7 +110,7 @@ class _MypageScreenState extends ConsumerState<MypageScreen>
     );
   }
 
-  Widget _buildMenuSection() {
+  Widget _buildMenuSectionService() {
     double screenWidth = MediaQuery.of(context).size.width;
     double sectionWidth = screenWidth * 0.89722222222;
 
@@ -125,22 +131,18 @@ class _MypageScreenState extends ConsumerState<MypageScreen>
             const SizedBox(height: 10),
             _buildMenuItem(
               '음성세팅',
-              () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const MypageToVoicesetting()),
-                );
+              () async {
+                final prefs = await SharedPreferences.getInstance();
+                final jwt = prefs.getString('access_token');
+
+                await ref.read(voicesProvider.notifier).fetchVoices(jwt!);
+                context.go('${Routes.myPage}/${Routes.voiceSetting}');
               },
             ),
             _buildMenuItem(
               '찜한 책 목록',
               () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const MypageToFavoritebooks()),
-                );
+                context.go('${Routes.myPage}/${Routes.mypageToFavoritebooks}');
               },
             ),
           ],
@@ -149,7 +151,7 @@ class _MypageScreenState extends ConsumerState<MypageScreen>
     );
   }
 
-  Widget _buildMenuSection2() {
+  Widget _buildMenuSectionSettings() {
     double screenWidth = MediaQuery.of(context).size.width;
     double sectionWidth = screenWidth * 0.89722222222;
 
@@ -181,21 +183,13 @@ class _MypageScreenState extends ConsumerState<MypageScreen>
             _buildMenuItem(
               '탈퇴하기',
               () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const MypageToDeleteaccount()),
-                );
+                context.go('${Routes.myPage}/${Routes.mypageToDeleteaccount}');
               },
             ),
             _buildMenuItem(
               '로그아웃',
               () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const MypageToDeleteaccount()),
-                );
+                _logout();
               },
             ),
           ],
@@ -205,10 +199,14 @@ class _MypageScreenState extends ConsumerState<MypageScreen>
   }
 
   Widget buildProfileContainer() {
-    final userResponse = ref.watch(userResponseProvider);
+    final userInfo = ref.watch(serverUserProvider);
+    if (userInfo == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    print('마이페이지: ${userInfo.profileImage}');
     double screenWidth = MediaQuery.of(context).size.width;
     double containerHeight = screenWidth * 0.69444444444;
-    double profileDiameter = screenWidth * 0.25;
+    double profileDiameter = 70;
 
     return Stack(
       children: [
@@ -223,18 +221,30 @@ class _MypageScreenState extends ConsumerState<MypageScreen>
             child: Row(
               children: [
                 const SizedBox(width: 20),
-                Image.asset(
-                  'assets/images/mypage/mypage_profile_mother.png',
-                  width: profileDiameter,
-                  height: profileDiameter,
-                ),
+                userInfo.profileImage != null
+                    ? Container(
+                        decoration: BoxDecoration(shape: BoxShape.circle),
+                        child: ClipOval(
+                          child: Image.network(
+                            userInfo.profileImage ?? '',
+                            width: profileDiameter,
+                            height: profileDiameter,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      )
+                    : Image.asset(
+                        'assets/images/mypage/mypage_profile_mother.png',
+                        width: profileDiameter,
+                        height: profileDiameter,
+                      ),
                 const SizedBox(width: 16),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '${userResponse?.nickname ?? 'Real Name'} 님',
+                      '${userInfo.nickname ?? 'Real Name'} 님',
                       style: TextStyle(
                         fontFamily: 'GyeonggiTitleVBold',
                         fontSize: 20,
@@ -244,7 +254,7 @@ class _MypageScreenState extends ConsumerState<MypageScreen>
                     ),
                     SizedBox(height: 4),
                     Text(
-                      '학부모 / 자녀 ',
+                      userInfo.userRole == 'parent' ? '학부모' : '자녀',
                       style: TextStyle(
                         fontFamily: 'GyeonggiTitleLight',
                         fontSize: 14,
