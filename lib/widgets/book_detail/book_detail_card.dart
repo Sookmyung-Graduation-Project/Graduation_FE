@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:phonics/widgets/basic_lg_button_for_text.dart';
 import 'book_info_row.dart';
 import 'book_rating_coin_row.dart';
 
