@@ -16,7 +16,6 @@ class _BasicLgButtonForTextState extends State<BasicLgButtonForText> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
     return GestureDetector(
@@ -44,7 +43,7 @@ class _BasicLgButtonForTextState extends State<BasicLgButtonForText> {
           transform: _isPressed
               ? Matrix4.translationValues(0, 4, 0)
               : Matrix4.identity(),
-          width: screenWidth * 0.91944444444,
+          width: double.infinity,
           height: screenHeight * 0.06402793946,
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 100),
           decoration: BoxDecoration(
