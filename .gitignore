@@ -47,4 +47,5 @@ app.*.map.json
 
 # Android NDK / CMake build artifacts
 android/app/.cxx/
-
+pubspec.lock
+lib/core/const/api_urls.dart
