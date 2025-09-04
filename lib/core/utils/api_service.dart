@@ -271,4 +271,56 @@ class ApiService {
       return null;
     }
   }
+
+  static Future<Map<String, dynamic>> markAttendance(
+      {required String jwt,
+      required String userId,
+      required bool isPresent}) async {
+    final url = Uri.parse('${ApiUrls.baseUrl}/attendance');
+    final body = json.encode({'user_id': userId, 'is_present': isPresent});
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $jwt',
+          'Content-Type': 'application/json',
+        },
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception('출석 체크 실패: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('출석 체크 오류: $e');
+      throw Exception('출석 체크 오류');
+    }
+  }
+
+  static Future<Map<String, dynamic>> getAttendanceStatus(
+      {required String jwt, required String userId}) async {
+    final url = Uri.parse('${ApiUrls.baseUrl}/attendance?user_id=$userId');
+
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $jwt',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception('출석 현황 조회 실패: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('출석 현황 조회 오류: $e');
+      throw Exception('출석 현황 조회 오류');
+    }
+  }
 }
