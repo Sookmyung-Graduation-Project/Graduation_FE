@@ -5,6 +5,7 @@ import 'package:phonics/core/provider/user_info_provider.dart';
 import '../data/dailyword_data.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import '../core/utils/api_service.dart';
+import '../screens/home_calendar.dart';
 
 class MyHomePage extends ConsumerStatefulWidget {
   const MyHomePage({super.key});
@@ -172,6 +173,32 @@ class _MyHomePageState extends ConsumerState<MyHomePage>
     super.dispose();
   }
 
+  void _goToCalendarScreen(BuildContext context) {
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const CalendarScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(0.0, 1.0);
+          const end = Offset.zero;
+          const curve = Curves.easeInOut;
+
+          var tween = Tween(begin: begin, end: end).chain(
+            CurveTween(curve: curve),
+          );
+
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 300),
+        reverseTransitionDuration: const Duration(milliseconds: 300),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final userResponse = ref.watch(userResponseProvider);
@@ -246,7 +273,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage>
                                 ),
                               ),
                               SizedBox(
-                                width: 70,
+                                width: 60,
                               ),
                               ElevatedButton(
                                 onPressed: _isChecked ? null : _onCheckPressed,
@@ -265,6 +292,17 @@ class _MyHomePageState extends ConsumerState<MyHomePage>
                                   ),
                                 ),
                                 child: const Text('CHECK'),
+                              ),
+                              SizedBox(
+                                width: 15,
+                              ),
+                              IconButton(
+                                onPressed: () => _goToCalendarScreen(context),
+                                icon: Image.asset(
+                                  'assets/navigation_icons/hometocal_icon.png',
+                                  width: 25,
+                                  height: 25,
+                                ),
                               ),
                             ],
                           ),

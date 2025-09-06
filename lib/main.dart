@@ -4,9 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_common.dart';
 import 'package:phonics/core/router/app_router.dart';
 import 'package:url_strategy/url_strategy.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting();
   await dotenv.load(fileName: ".env");
 
   final String kakaoNativeAppKey = dotenv.get('KAKAO_NATIVE_APP_KEY');
