@@ -1,8 +1,66 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../widgets/calendar_widget.dart';
+import '../core/provider/login_provider.dart';
+import '../core/provider/user_info_provider.dart';
+import '../core/utils/api_service.dart';
 
-class CalendarScreen extends StatelessWidget {
+class CalendarScreen extends ConsumerStatefulWidget {
   const CalendarScreen({super.key});
+
+  @override
+  ConsumerState<CalendarScreen> createState() => _CalendarScreenState();
+}
+
+class _CalendarScreenState extends ConsumerState<CalendarScreen> {
+  Set<DateTime> _attendedDates = <DateTime>{};
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAttendanceStatus();
+  }
+
+  Future<void> _loadAttendanceStatus() async {
+    final user = ref.read(userResponseProvider);
+    final serverUser = ref.read(serverUserProvider);
+    if (user == null || serverUser == null) {
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    try {
+      final resp = await ApiService.getAttendanceStatus(
+          jwt: user.accessToken, userId: serverUser.id);
+
+      final List<dynamic> allAttendedDays =
+          (resp['attended_days'] ?? []) as List<dynamic>;
+      final Set<DateTime> attendedDates = <DateTime>{};
+
+      // 전체 출석 날짜를 DateTime으로 변환
+      for (String dateStr in allAttendedDays) {
+        try {
+          final date = DateTime.parse(dateStr);
+          attendedDates.add(DateTime(date.year, date.month, date.day));
+        } catch (e) {
+          print('날짜 파싱 오류: $dateStr, $e');
+        }
+      }
+
+      setState(() {
+        _attendedDates = attendedDates;
+        _isLoading = false;
+      });
+    } catch (e) {
+      print('출석현황 로드 오류: $e');
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +102,9 @@ class CalendarScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: const CalendarWidget(),
+                child: _isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : CalendarWidget(attendedDates: _attendedDates),
               ),
             ),
             const SizedBox(height: 16),

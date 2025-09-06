@@ -106,10 +106,30 @@ class _MyHomePageState extends ConsumerState<MyHomePage>
       print('attended_days: ${resp['attended_days']}');
 
       final consecutive = (resp['consecutive_days'] ?? 0) as int;
-      final List<dynamic> days = (resp['attended_days'] ?? []) as List<dynamic>;
+      final List<dynamic> AttendedDays =
+          (resp['attended_days'] ?? []) as List<dynamic>;
+
+      // 현재 주의 출석된 요일들을 계산
+      final now = DateTime.now();
+      final currentWeekStart = now.subtract(Duration(days: now.weekday - 1));
+      final Set<int> attendedDays = <int>{};
+
+      for (String dateStr in AttendedDays) {
+        try {
+          final date = DateTime.parse(dateStr);
+          // 현재 주 범위 내의 날짜인지 확인
+          if (date.isAfter(currentWeekStart.subtract(Duration(days: 1))) &&
+              date.isBefore(currentWeekStart.add(Duration(days: 7)))) {
+            attendedDays.add(date.weekday - 1); // 0 기반 요일 인덱스로 변환
+          }
+        } catch (e) {
+          print('날짜 파싱 오류: $dateStr, $e');
+        }
+      }
+
       setState(() {
         _consecutiveDays = consecutive;
-        _attendedDays = days.map((e) => (e as num).toInt()).toSet();
+        _attendedDays = attendedDays;
         // 오늘 요일(월=1..일=7)을 0 기반(월=0..일=6)으로 변환해 체크 상태 계산
         final int todayIndex = DateTime.now().weekday - 1;
         _isChecked = _attendedDays.contains(todayIndex);
