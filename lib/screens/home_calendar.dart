@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../widgets/calendar_widget.dart';
-import '../core/provider/login_provider.dart';
-import '../core/provider/user_info_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../core/utils/api_service.dart';
 
 class CalendarScreen extends ConsumerStatefulWidget {
@@ -23,9 +22,10 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   }
 
   Future<void> _loadAttendanceStatus() async {
-    final user = ref.read(userResponseProvider);
-    final serverUser = ref.read(serverUserProvider);
-    if (user == null || serverUser == null) {
+    final prefs = await SharedPreferences.getInstance();
+    final jwt = prefs.getString('access_token');
+    final userId = prefs.getString('user_id');
+    if (jwt == null || userId == null) {
       setState(() {
         _isLoading = false;
       });
@@ -33,8 +33,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     }
 
     try {
-      final resp = await ApiService.getAttendanceStatus(
-          jwt: user.accessToken, userId: serverUser.id);
+      final resp =
+          await ApiService.getAttendanceStatus(jwt: jwt, userId: userId);
 
       final List<dynamic> allAttendedDays =
           (resp['attended_days'] ?? []) as List<dynamic>;

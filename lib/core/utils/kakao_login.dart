@@ -42,6 +42,7 @@ class KakaoLoginApi {
       final meJson = await ApiService.fetchMyInfo(jwt: jwt);
       if (meJson == null) throw Exception("fetchMyInfo returned null");
       final me = UserInfo.fromJson(meJson);
+      await prefs.setString('user_id', me.id); // id 저장
 
       // 5) 내 보이스 목록 (실패해도 로그인은 계속)
       final getVoices = await ApiService.fetchMyVoices(jwt: jwt);

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:phonics/core/provider/login_provider.dart';
-import 'package:phonics/core/provider/user_info_provider.dart';
-import '../data/dailyword_data.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../data/dailyword_data.dart';
 import '../core/utils/api_service.dart';
 import '../screens/home_calendar.dart';
 
@@ -43,7 +43,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage>
 
   Future<void> _initTts() async {
     await flutterTts.awaitSpeakCompletion(true);
-    await flutterTts.setSpeechRate(0.42);
+    await flutterTts.setSpeechRate(0.2);
     await flutterTts.setPitch(1.0);
     await flutterTts.setVolume(1.0);
     await flutterTts.setLanguage('en-US');
@@ -73,11 +73,14 @@ class _MyHomePageState extends ConsumerState<MyHomePage>
 
   Future<void> _ttsTodayWord() async {
     final text = _todayWord?.word.trim();
-    if (text == null || text.isEmpty) return;
+    final text2 = _todayWord?.example.trim();
+    if (text == null || text.isEmpty || text2 == null || text2.isEmpty) return;
     try {
       await flutterTts.stop();
     } catch (_) {}
     await flutterTts.speak(text);
+    await Future.delayed(const Duration(milliseconds: 600));
+    await flutterTts.speak(text2);
   }
 
   void _setupBubbleAnimation() {
@@ -95,12 +98,13 @@ class _MyHomePageState extends ConsumerState<MyHomePage>
   }
 
   Future<void> _loadAttendanceStatus() async {
-    final user = ref.read(userResponseProvider);
-    final serverUser = ref.read(serverUserProvider);
-    if (user == null || serverUser == null) return;
+    final prefs = await SharedPreferences.getInstance();
+    final jwt = prefs.getString('access_token');
+    final userId = prefs.getString('user_id');
+    if (jwt == null || userId == null) return;
     try {
-      final resp = await ApiService.getAttendanceStatus(
-          jwt: user.accessToken, userId: serverUser.id);
+      final resp =
+          await ApiService.getAttendanceStatus(jwt: jwt, userId: userId);
       print('=== 출석현황 응답 ===');
       print('consecutive_days: ${resp['consecutive_days']}');
       print('attended_days: ${resp['attended_days']}');
@@ -141,12 +145,13 @@ class _MyHomePageState extends ConsumerState<MyHomePage>
   }
 
   Future<void> _onCheckPressed() async {
-    final user = ref.read(userResponseProvider);
-    final serverUser = ref.read(serverUserProvider);
-    if (user == null || serverUser == null) return;
+    final prefs = await SharedPreferences.getInstance();
+    final jwt = prefs.getString('access_token');
+    final userId = prefs.getString('user_id');
+    if (jwt == null || userId == null) return;
     try {
       final resp = await ApiService.markAttendance(
-          jwt: user.accessToken, userId: serverUser.id, isPresent: true);
+          jwt: jwt, userId: userId, isPresent: true);
 
       print('=== 출석체크 응답 ===');
       print('consecutive_days: ${resp['consecutive_days']}');
