@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:phonics/core/provider/login_provider.dart';
-import '../data/dailyword_data.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../data/dailyword_data.dart';
+import '../core/utils/api_service.dart';
+import '../screens/home_calendar.dart';
 
 class MyHomePage extends ConsumerStatefulWidget {
   const MyHomePage({super.key});
@@ -16,6 +19,8 @@ class _MyHomePageState extends ConsumerState<MyHomePage>
   int _consecutiveDays = 0;
   bool _isChecked = false;
   bool _showBubble = false;
+  // 금주 요일 출석(0=월 ~ 6=일)
+  Set<int> _attendedDays = <int>{};
   AnimationController? _bubbleAnimationController;
   Animation<double>? _bubbleAnimation;
   DailyWord? _todayWord;
@@ -24,8 +29,10 @@ class _MyHomePageState extends ConsumerState<MyHomePage>
   @override
   void initState() {
     super.initState();
+    _initTts();
     _loadTodayWord();
     _setupBubbleAnimation();
+    _loadAttendanceStatus();
   }
 
   void _loadTodayWord() {
@@ -34,11 +41,46 @@ class _MyHomePageState extends ConsumerState<MyHomePage>
     });
   }
 
-  Future<void> _ttsTodayWord() async {
-    if (_todayWord != null) {
-      await flutterTts.setSpeechRate(0.5);
-      await flutterTts.speak(_todayWord!.word);
+  Future<void> _initTts() async {
+    await flutterTts.awaitSpeakCompletion(true);
+    await flutterTts.setSpeechRate(0.2);
+    await flutterTts.setPitch(1.0);
+    await flutterTts.setVolume(1.0);
+    await flutterTts.setLanguage('en-US');
+
+    try {
+      await flutterTts.setEngine('com.google.android.tts');
+      await Future.delayed(const Duration(milliseconds: 200));
+    } catch (_) {}
+
+    final voices = await flutterTts.getVoices;
+    if (voices is List) {
+      final en = voices
+          .whereType<Map>()
+          .map((m) => m.map((k, v) => MapEntry(k.toString(), '${v ?? ''}')))
+          .firstWhere(
+            (v) =>
+                (v['locale'] ?? '').toLowerCase().startsWith('en-us') ||
+                (v['locale'] ?? '').toLowerCase().startsWith('en-'),
+            orElse: () => const {},
+          );
+      if (en.isNotEmpty) {
+        await flutterTts.setVoice(en);
+        await flutterTts.setLanguage('en-US');
+      }
     }
+  }
+
+  Future<void> _ttsTodayWord() async {
+    final text = _todayWord?.word.trim();
+    final text2 = _todayWord?.example.trim();
+    if (text == null || text.isEmpty || text2 == null || text2.isEmpty) return;
+    try {
+      await flutterTts.stop();
+    } catch (_) {}
+    await flutterTts.speak(text);
+    await Future.delayed(const Duration(milliseconds: 600));
+    await flutterTts.speak(text2);
   }
 
   void _setupBubbleAnimation() {
@@ -55,25 +97,98 @@ class _MyHomePageState extends ConsumerState<MyHomePage>
     ));
   }
 
-  void _onCheckPressed() {
-    setState(() {
-      _isChecked = !_isChecked;
-      _consecutiveDays = 1;
-      _showBubble = true;
-    });
+  Future<void> _loadAttendanceStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    final jwt = prefs.getString('access_token');
+    final userId = prefs.getString('user_id');
+    if (jwt == null || userId == null) return;
+    try {
+      final resp =
+          await ApiService.getAttendanceStatus(jwt: jwt, userId: userId);
+      print('=== 출석현황 응답 ===');
+      print('consecutive_days: ${resp['consecutive_days']}');
+      print('attended_days: ${resp['attended_days']}');
 
-    // 말풍선 애니메이션 실행
-    _bubbleAnimationController?.forward().then((_) {
-      Future.delayed(const Duration(milliseconds: 1500), () {
-        if (mounted) {
-          _bubbleAnimationController?.reverse().then((_) {
-            setState(() {
-              _showBubble = false;
-            });
-          });
+      final consecutive = (resp['consecutive_days'] ?? 0) as int;
+      final List<dynamic> AttendedDays =
+          (resp['attended_days'] ?? []) as List<dynamic>;
+
+      // 현재 주의 출석된 요일들을 계산
+      final now = DateTime.now();
+      final currentWeekStart = now.subtract(Duration(days: now.weekday - 1));
+      final Set<int> attendedDays = <int>{};
+
+      for (String dateStr in AttendedDays) {
+        try {
+          final date = DateTime.parse(dateStr);
+          // 현재 주 범위 내의 날짜인지 확인
+          if (date.isAfter(currentWeekStart.subtract(Duration(days: 1))) &&
+              date.isBefore(currentWeekStart.add(Duration(days: 7)))) {
+            attendedDays.add(date.weekday - 1); // 0 기반 요일 인덱스로 변환
+          }
+        } catch (e) {
+          print('날짜 파싱 오류: $dateStr, $e');
         }
+      }
+
+      setState(() {
+        _consecutiveDays = consecutive;
+        _attendedDays = attendedDays;
+        // 오늘 요일(월=1..일=7)을 0 기반(월=0..일=6)으로 변환해 체크 상태 계산
+        final int todayIndex = DateTime.now().weekday - 1;
+        _isChecked = _attendedDays.contains(todayIndex);
       });
-    });
+    } catch (e) {
+      print('출석현황 로드 오류: $e');
+      // 무시하고 화면은 기본값 유지
+    }
+  }
+
+  Future<void> _onCheckPressed() async {
+    final prefs = await SharedPreferences.getInstance();
+    final jwt = prefs.getString('access_token');
+    final userId = prefs.getString('user_id');
+    if (jwt == null || userId == null) return;
+    try {
+      final resp = await ApiService.markAttendance(
+          jwt: jwt, userId: userId, isPresent: true);
+
+      print('=== 출석체크 응답 ===');
+      print('consecutive_days: ${resp['consecutive_days']}');
+      print('status: ${resp['status']}');
+
+      // 성공 시 UI 반영 및 애니메이션
+      final int todayIndex = DateTime.now().weekday - 1; // 0=월
+      final updatedConsecutiveDays = (resp['consecutive_days'] ?? 0) as int;
+
+      setState(() {
+        _isChecked = true;
+        _attendedDays = {..._attendedDays, todayIndex};
+        _consecutiveDays = updatedConsecutiveDays; // 서버에서 받은 정확한 연속출석일 사용
+        _showBubble = true;
+      });
+
+      _bubbleAnimationController?.forward().then((_) {
+        Future.delayed(const Duration(milliseconds: 1500), () {
+          if (mounted) {
+            _bubbleAnimationController?.reverse().then((_) {
+              if (mounted) {
+                setState(() {
+                  _showBubble = false;
+                });
+              }
+            });
+          }
+        });
+      });
+    } catch (e) {
+      print('출석체크 오류: $e');
+      // 실패 시 스낵바 알림
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('출석 체크 실패')),
+      );
+    }
   }
 
   @override
@@ -81,6 +196,32 @@ class _MyHomePageState extends ConsumerState<MyHomePage>
     _bubbleAnimationController?.dispose();
     flutterTts.stop();
     super.dispose();
+  }
+
+  void _goToCalendarScreen(BuildContext context) {
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const CalendarScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(0.0, 1.0);
+          const end = Offset.zero;
+          const curve = Curves.easeInOut;
+
+          var tween = Tween(begin: begin, end: end).chain(
+            CurveTween(curve: curve),
+          );
+
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 300),
+        reverseTransitionDuration: const Duration(milliseconds: 300),
+      ),
+    );
   }
 
   @override
@@ -130,7 +271,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage>
                           Row(
                             children: [
                               Text(
-                                _consecutiveDays > 0 ? '연속 학습' : '연속 출석',
+                                '연속 학습',
                                 style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w500,
@@ -157,7 +298,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage>
                                 ),
                               ),
                               SizedBox(
-                                width: 70,
+                                width: 60,
                               ),
                               ElevatedButton(
                                 onPressed: _isChecked ? null : _onCheckPressed,
@@ -177,6 +318,17 @@ class _MyHomePageState extends ConsumerState<MyHomePage>
                                 ),
                                 child: const Text('CHECK'),
                               ),
+                              SizedBox(
+                                width: 15,
+                              ),
+                              IconButton(
+                                onPressed: () => _goToCalendarScreen(context),
+                                icon: Image.asset(
+                                  'assets/navigation_icons/hometocal_icon.png',
+                                  width: 25,
+                                  height: 25,
+                                ),
+                              ),
                             ],
                           ),
                           const SizedBox(height: 16),
@@ -185,20 +337,13 @@ class _MyHomePageState extends ConsumerState<MyHomePage>
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              _buildDayCheckbox('월',
-                                  DateTime.now().weekday == 1 && _isChecked),
-                              _buildDayCheckbox('화',
-                                  DateTime.now().weekday == 2 && _isChecked),
-                              _buildDayCheckbox('수',
-                                  DateTime.now().weekday == 3 && _isChecked),
-                              _buildDayCheckbox('목',
-                                  DateTime.now().weekday == 4 && _isChecked),
-                              _buildDayCheckbox('금',
-                                  DateTime.now().weekday == 5 && _isChecked),
-                              _buildDayCheckbox('토',
-                                  DateTime.now().weekday == 6 && _isChecked),
-                              _buildDayCheckbox('일',
-                                  DateTime.now().weekday == 7 && _isChecked),
+                              _buildDayCheckbox('월', _attendedDays.contains(0)),
+                              _buildDayCheckbox('화', _attendedDays.contains(1)),
+                              _buildDayCheckbox('수', _attendedDays.contains(2)),
+                              _buildDayCheckbox('목', _attendedDays.contains(3)),
+                              _buildDayCheckbox('금', _attendedDays.contains(4)),
+                              _buildDayCheckbox('토', _attendedDays.contains(5)),
+                              _buildDayCheckbox('일', _attendedDays.contains(6)),
                             ],
                           ),
                         ],
@@ -261,7 +406,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage>
                       ),
                     ),
                     SizedBox(
-                      height: 150,
+                      height: 170,
                     )
                   ],
                 ),

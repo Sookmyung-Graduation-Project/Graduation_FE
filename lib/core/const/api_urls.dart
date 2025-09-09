@@ -1,8 +1,6 @@
 class ApiUrls {
-  static final String baseUrl = 'http://172.30.1.60:8000'; // simulator
   // static final String baseUrl = 'http://172.30.1.40:8000';
-
-// Auth
+  static final String baseUrl = 'http://localhost:8000';
   static final String loginUrl = '$baseUrl/login';
   static final String userInfoUrl = '$baseUrl/me';
   // Voice

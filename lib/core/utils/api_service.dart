@@ -273,7 +273,6 @@ class ApiService {
       return null;
     }
   }
-
   // 기본 음성의 voice_id 가져오기
   static Future<String?> fetchDefaultVoiceId({
     required String jwt,
@@ -348,5 +347,56 @@ class ApiService {
   /// 필요 시 캐시 초기화
   static void clearDefaultVoiceCache() {
     _cachedDefaultVoiceId = null;
+  }
+  
+  static Future<Map<String, dynamic>> markAttendance(
+      {required String jwt,
+      required String userId,
+      required bool isPresent}) async {
+    final url = Uri.parse('${ApiUrls.baseUrl}/attendance');
+    final body = json.encode({'user_id': userId, 'is_present': isPresent});
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $jwt',
+          'Content-Type': 'application/json',
+        },
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception('출석 체크 실패: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('출석 체크 오류: $e');
+      throw Exception('출석 체크 오류');
+    }
+  }
+  static Future<Map<String, dynamic>> getAttendanceStatus(
+      {required String jwt, required String userId}) async {
+    final url = Uri.parse('${ApiUrls.baseUrl}/attendance?user_id=$userId');
+
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $jwt',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception('출석 현황 조회 실패: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('출석 현황 조회 오류: $e');
+      throw Exception('출석 현황 조회 오류');
+    }
   }
 }
