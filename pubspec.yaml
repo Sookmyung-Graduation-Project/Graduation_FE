@@ -48,6 +48,7 @@ flutter:
     - assets/images/words/
     - assets/images/mypage/
     - assets/images/core/
+    - assets/images/library/
     - assets/navigation_icons/
   fonts:
     - family: GyeonggiBatangBold

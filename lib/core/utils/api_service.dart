@@ -6,6 +6,8 @@ import 'dart:convert';
 import 'package:phonics/core/const/api_urls.dart';
 
 class ApiService {
+  //변수
+  static String? _cachedDefaultVoiceId;
   // 로그인 시 토큰을 백엔드로 전송
   static Future<Map<String, dynamic>> sendTokenToBackend({
     required String accessToken,
@@ -271,7 +273,82 @@ class ApiService {
       return null;
     }
   }
+  // 기본 음성의 voice_id 가져오기
+  static Future<String?> fetchDefaultVoiceId({
+    required String jwt,
+  }) async {
+    final voices = await fetchMyVoices(jwt: jwt);
 
+    if (voices == null || voices.isEmpty) {
+      print('==기본 음성 조회 실패== 목록 없음');
+      return null;
+    }
+
+    final defaultVoice = voices.firstWhere(
+      (v) => v['default_id'] == true,
+      orElse: () => {},
+    );
+
+    if (defaultVoice.isEmpty) {
+      print('==기본 음성 없음==');
+      return null;
+    }
+
+    return defaultVoice['voice_id'] as String?;
+  }
+
+  /// 기본 보이스로 TTS 호출
+  static Future<Uint8List?> ttsWithDefaultVoice({
+    required String jwt,
+    required String text,
+  }) async {
+    try {
+      // 캐시가 없으면 조회
+      final voiceId =
+          _cachedDefaultVoiceId ?? await fetchDefaultVoiceId(jwt: jwt);
+
+      if (voiceId == null || voiceId.isEmpty) {
+        print('==TTS 실패== 기본 보이스 ID를 찾을 수 없음');
+        return null;
+      }
+
+      // 캐시에 저장
+      _cachedDefaultVoiceId = voiceId;
+
+      // 서버가 요구하는 x-www-form-urlencoded로 호출
+      final url = Uri.parse(ApiUrls.ttsWithDefaultVoice);
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $jwt',
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: {
+          'voice_id': voiceId,
+          'text': text,
+        },
+      ).timeout(const Duration(seconds: 15));
+
+      if (response.statusCode == 200) {
+        return response.bodyBytes; // audio/mpeg 바이너리
+      } else {
+        print('==TTS 실패== ${response.statusCode} ${response.body}');
+        return null;
+      }
+    } on TimeoutException {
+      print('==TTS 실패== 요청 시간 초과');
+      return null;
+    } catch (e) {
+      print('==TTS 실패== $e');
+      return null;
+    }
+  }
+
+  /// 필요 시 캐시 초기화
+  static void clearDefaultVoiceCache() {
+    _cachedDefaultVoiceId = null;
+  }
+  
   static Future<Map<String, dynamic>> markAttendance(
       {required String jwt,
       required String userId,
@@ -299,7 +376,6 @@ class ApiService {
       throw Exception('출석 체크 오류');
     }
   }
-
   static Future<Map<String, dynamic>> getAttendanceStatus(
       {required String jwt, required String userId}) async {
     final url = Uri.parse('${ApiUrls.baseUrl}/attendance?user_id=$userId');

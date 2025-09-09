@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:phonics/widgets/basic_lg_button_for_text.dart';
 import 'book_info_row.dart';
 import 'book_rating_coin_row.dart';
 
@@ -30,7 +29,7 @@ class BookDetailCard extends StatelessWidget {
     return Column(
       children: [
         BookRatingCoinRow(coin: coin, rating: rating, imageUrl: imageUrl),
-        const SizedBox(height: 12),
+        const SizedBox(height: 30),
         Text(
           title,
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
