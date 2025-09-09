@@ -27,9 +27,36 @@ class BookInfoRow extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        buildIconText(Icons.flag, age),
-        buildIconText(Icons.menu_book, pages),
-        buildIconText(Icons.hourglass_bottom, duration),
+        Column(
+          children: [
+            Image.asset(
+              'assets/images/library/age.png',
+              width: 49,
+            ),
+            SizedBox(height: 4),
+            Text(age, style: TextStyle(fontSize: 12)),
+          ],
+        ),
+        Column(
+          children: [
+            Image.asset(
+              'assets/images/library/pages.png',
+              width: 49,
+            ),
+            SizedBox(height: 4),
+            Text(pages, style: TextStyle(fontSize: 12)),
+          ],
+        ),
+        Column(
+          children: [
+            Image.asset(
+              'assets/images/library/duration.png',
+              width: 49,
+            ),
+            SizedBox(height: 4),
+            Text(duration, style: TextStyle(fontSize: 12)),
+          ],
+        ),
       ],
     );
   }
