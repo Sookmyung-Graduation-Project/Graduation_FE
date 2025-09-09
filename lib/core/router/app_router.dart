@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:phonics/book_content_screen.dart';
 import 'package:phonics/core/screens/login_screen.dart';
+import 'package:phonics/screens/book_detail_screen.dart';
 import 'package:phonics/screens/home.dart';
 import 'package:phonics/screens/library_tab/home_tab_screen.dart';
 import 'package:phonics/screens/mypage_tab/mypage_screen.dart';
@@ -86,14 +88,35 @@ final GoRouter appRouter = GoRouter(
         );
       },
       routes: [
+        // 홈
         GoRoute(
           path: Routes.home,
           builder: (context, state) => const MyHomePage(),
         ),
+        //서재
         GoRoute(
-          path: Routes.homeTab,
-          builder: (context, state) => const HomeTabScreen(),
-        ),
+            path: Routes.homeTab,
+            builder: (context, state) => const HomeTabScreen(),
+            routes: [
+              GoRoute(
+                  path: Routes.bookDetail,
+                  builder: (context, state) {
+                    final book = state.extra as Map<String, dynamic>;
+                    return BookDetailScreen(book: book);
+                  },
+                  routes: [
+                    GoRoute(
+                      path: Routes.bookContent,
+                      builder: (context, state) {
+                        final book = state.extra as Map<String, dynamic>;
+                        final pages = List<String>.from(
+                            book['content'] ?? const <String>[]);
+                        return BookContentScreen(pages: pages);
+                      },
+                    ),
+                  ]),
+            ]),
+        //마이페이지
         GoRoute(
             path: Routes.myPage,
             builder: (context, state) => const MypageScreen(),
@@ -115,10 +138,12 @@ final GoRouter appRouter = GoRouter(
                 builder: (context, state) => const MypageToDeleteaccount(),
               ),
             ]),
+        // 책 만들기
         GoRoute(
           path: Routes.bookCreation,
           builder: (context, state) => const CreateBookScreen(),
         ),
+        // 학습 페이지
         GoRoute(
           path: Routes.study,
           builder: (context, state) => const StudyScreen(),

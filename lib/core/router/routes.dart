@@ -6,6 +6,10 @@ class Routes {
   static const String myPage = '/myPage';
   static const String bookCreation = '/bookCreation';
 
+  //library routes
+  static const String bookDetail = 'book-detail';
+  static const String bookContent = 'book-content';
+
   //Study routes
   static const String quiz = 'quiz';
   static const String phonics = 'phonics';
