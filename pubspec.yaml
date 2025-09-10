@@ -30,6 +30,8 @@ dependencies:
   permission_handler: ^12.0.0+1
   shared_preferences: ^2.5.3
   url_strategy: ^0.3.0
+  table_calendar: ^3.2.0
+  flutter_native_splash: ^2.4.6
 
 dev_dependencies:
   flutter_dash: ^1.0.0
@@ -37,6 +39,27 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.14.4
+
+flutter_launcher_icons: 
+  android: true
+  ios: true
+  image_path: "assets/logo_icons/logo_icon.png"
+  remove_alpha_ios: true
+
+flutter_native_splash:
+  android: true
+  ios: true
+  web: true
+  color: "BCE399"
+  image: assets/logo_icons/splash_first.png
+  branding: assets/logo_icons/branding_typo.png
+  branding_mode: bottom
+  android_12:
+    color: "BCE399"
+    image: assets/logo_icons/splash_first.png
+    branding: assets/logo_icons/branding_typo.png
+    branding_mode: bottom
 
 flutter:
 
@@ -50,6 +73,7 @@ flutter:
     - assets/images/core/
     - assets/images/library/
     - assets/navigation_icons/
+    - assets/logo_icons/
   fonts:
     - family: GyeonggiBatangBold
       fonts:
