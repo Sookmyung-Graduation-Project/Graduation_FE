@@ -240,13 +240,21 @@ class _MyHomePageState extends ConsumerState<MyHomePage>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // 앱 로고/이름
-                    Text(
-                      'APP LOGO | ${userResponse?.nickname ?? 'Guest'} 님',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
+                    Image.asset(
+                      'assets/logo_icons/typo_en.png',
+                      width: 170,
+                      fit: BoxFit.contain,
+                      filterQuality: FilterQuality.high,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Text(
+                          'Buddy Books',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        );
+                      },
                     ),
                     const SizedBox(height: 12),
 
