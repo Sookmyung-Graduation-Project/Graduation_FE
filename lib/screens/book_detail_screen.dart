@@ -2,11 +2,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phonics/core/router/routes.dart';
+import 'package:phonics/core/models/book/book_generation_response.dart';
 import 'package:phonics/widgets/basic_lg_button_for_text.dart';
 import 'package:phonics/widgets/book_detail/book_detail_card.dart';
 
 class BookDetailScreen extends StatelessWidget {
-  final Map<String, dynamic> book;
+  final BookGenerationResponse book;
 
   const BookDetailScreen({
     super.key,
@@ -25,17 +26,17 @@ class BookDetailScreen extends StatelessWidget {
         child: Column(
           children: [
             BookDetailCard(
-              title: book['title'],
-              imageUrl: book['image'],
-              coin: book['point'],
-              rating: book['rating'],
-              age: '만 4~5세',
-              pages: '10 페이지',
-              duration: '10분',
-              summary: book['summary'],
+              title: book.title,
+              imageUrl: book.pages.isNotEmpty ? book.pages.first.imageUrl : null,
+              coin: 0, // API에서 제공하지 않음
+              rating: 5.0, // 기본값
+              age: '만 4~5세', // 기본값
+              pages: '${book.pages.length} 페이지',
+              duration: '10분', // 기본값
+              summary: book.pages.isNotEmpty ? book.pages.first.text : '동화책 내용',
             ),
             GoToBookButton(book: book),
-            SizedBox(
+            const SizedBox(
               height: 30,
             )
           ],
@@ -46,7 +47,7 @@ class BookDetailScreen extends StatelessWidget {
 }
 
 class GoToBookButton extends StatelessWidget {
-  final Map<String, dynamic> book;
+  final BookGenerationResponse book;
 
   const GoToBookButton({
     super.key,

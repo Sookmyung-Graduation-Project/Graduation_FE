@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'recent_section.dart';
+import 'book_list_screen.dart';
 import 'ranking_section.dart';
 import 'favorite_section.dart';
 
@@ -152,7 +152,7 @@ class _HomeTabScreenState extends State<HomeTabScreen>
                       fontWeight: FontWeight.normal,
                     ),
                     tabs: const [
-                      Tab(text: 'Recent'),
+                      Tab(text: '내 동화책'),
                       Tab(text: 'Ranking'),
                       Tab(text: 'Favorite'),
                     ],
@@ -177,7 +177,7 @@ class _HomeTabScreenState extends State<HomeTabScreen>
                   child: TabBarView(
                     controller: _tabController,
                     children: const [
-                      RecentSection(),
+                      BookListScreen(),
                       RankingSection(),
                       FavoriteSection(),
                     ],

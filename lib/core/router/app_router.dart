@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phonics/book_content_screen.dart';
+import 'package:phonics/core/models/book/book_generation_response.dart';
 import 'package:phonics/core/screens/login_screen.dart';
 import 'package:phonics/screens/book_detail_screen.dart';
 import 'package:phonics/screens/home.dart';
@@ -16,9 +17,11 @@ import 'package:phonics/screens/createbook_tab/createbook_screen.dart';
 import 'package:phonics/widgets/bottom_nav_bar.dart';
 import 'package:phonics/core/router/routes.dart';
 import 'package:phonics/screens/study_tab/quiz_detailmenu.dart';
+import 'package:phonics/screens/test_book_detail_screen.dart';
 
 final GoRouter appRouter = GoRouter(
-  initialLocation: Routes.login,
+  // initialLocation: Routes.login,
+  initialLocation: Routes.home,
   routes: [
     GoRoute(
       path: Routes.login,
@@ -102,15 +105,15 @@ final GoRouter appRouter = GoRouter(
                   path: Routes.bookDetail,
                   builder: (context, state) {
                     final book = state.extra as Map<String, dynamic>;
-                    return BookDetailScreen(book: book);
+                    final bookResponse = BookGenerationResponse.fromJson(book);
+                    return BookDetailScreen(book: bookResponse);
                   },
                   routes: [
                     GoRoute(
                       path: Routes.bookContent,
                       builder: (context, state) {
-                        final book = state.extra as Map<String, dynamic>;
-                        final pages = List<String>.from(
-                            book['content'] ?? const <String>[]);
+                        final book = state.extra as BookGenerationResponse;
+                        final pages = book.pages.map((page) => page.text).toList();
                         return BookContentScreen(pages: pages);
                       },
                     ),
@@ -163,6 +166,11 @@ final GoRouter appRouter = GoRouter(
           ],
         ),
       ],
+    ),
+    // 크롬 테스트용 BookDetailScreen 라우트
+    GoRoute(
+      path: Routes.testBookDetail,
+      builder: (context, state) => const TestBookDetailScreen(),
     ),
   ],
 );

@@ -39,11 +39,12 @@ class _GeneratingScreenState extends State<GeneratingScreen> {
   }
 
   void _goToLibHomeScreen(BuildContext context) {
-    Navigator.push(
+    Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
         builder: (context) => const HomeTabScreen(),
       ),
+      (route) => false, // 모든 이전 화면 제거
     );
   }
 

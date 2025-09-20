@@ -1,10 +1,16 @@
 import 'package:go_router/go_router.dart';
 import 'package:phonics/core/router/routes.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:phonics/core/utils/api_service.dart';
+import 'package:phonics/core/models/book/book_generation_request.dart';
+import 'package:phonics/core/models/book/book_options.dart';
 
 import 'character_selection_screen.dart';
 import 'gender_age_screen.dart';
 import 'lesson_selection_screen.dart';
 import 'voice_selection_screen.dart';
+import 'generate_screen.dart';
+import '../book_detail_screen.dart';
 import '../../widgets/constants.dart';
 import 'package:flutter/material.dart';
 import '../../widgets/custom_progress_bar_v2.dart';
@@ -27,6 +33,113 @@ class _CreateBookScreenState extends State<CreateBookScreen> {
   bool isStep2Completed = false;
   bool isStep3Completed = false;
   double progress = 0.15; //프로그레스 상태 변수 추가
+  
+  // API 관련 상태
+  BookOptions? bookOptions;
+  bool isLoadingOptions = false;
+  bool isGenerating = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBookOptions();
+  }
+
+  Future<void> _loadBookOptions() async {
+    setState(() {
+      isLoadingOptions = true;
+    });
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final jwt = prefs.getString('access_token');
+      
+      if (jwt != null) {
+        final options = await ApiService.fetchBookOptions(jwt: jwt);
+        setState(() {
+          bookOptions = options;
+          isLoadingOptions = false;
+        });
+      } else {
+        setState(() {
+          isLoadingOptions = false;
+        });
+        _showErrorDialog('로그인이 필요합니다.');
+      }
+    } catch (e) {
+      setState(() {
+        isLoadingOptions = false;
+      });
+      _showErrorDialog('옵션을 불러오는데 실패했습니다.');
+    }
+  }
+
+  Future<void> _generateBook() async {
+    if (isGenerating) return;
+
+    setState(() {
+      isGenerating = true;
+    });
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final jwt = prefs.getString('access_token');
+      
+      if (jwt == null) {
+        _showErrorDialog('로그인이 필요합니다.');
+        return;
+      }
+
+      final request = BookGenerationRequest(
+        gender: selectedGender,
+        ageGroup: selectedAgeGroup,
+        lesson: selectedLesson,
+        character: selectedCharacter,
+        voice: selectedVoice,
+      );
+
+      final response = await ApiService.generateBook(
+        jwt: jwt,
+        request: request,
+      );
+
+      if (response != null) {
+        // 책 생성 성공 - 바로 책 읽기 화면으로 이동
+        if (mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => BookDetailScreen(book: response),
+            ),
+          );
+        }
+      } else {
+        _showErrorDialog('책 생성에 실패했습니다. 다시 시도해주세요.');
+      }
+    } catch (e) {
+      _showErrorDialog('책 생성 중 오류가 발생했습니다.');
+    } finally {
+      setState(() {
+        isGenerating = false;
+      });
+    }
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('오류'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('확인'),
+          ),
+        ],
+      ),
+    );
+  }
 
   void _onGenderSelected(String gender) {
     setState(() {
@@ -103,15 +216,21 @@ class _CreateBookScreenState extends State<CreateBookScreen> {
       backgroundColor: AppColors.backgroundColor,
       body: Stack(
         children: [
-          SingleChildScrollView(
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(30.0),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 50),
-                    DinosaurProgressBar(progress: progress),
-                    const SizedBox(height: 10),
+          // 로딩 상태 처리
+          if (isLoadingOptions)
+            const Center(
+              child: CircularProgressIndicator(),
+            )
+          else
+            SingleChildScrollView(
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.all(30.0),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 50),
+                      DinosaurProgressBar(progress: progress),
+                      const SizedBox(height: 10),
                     if (!isStep1Completed)
                       Column(
                         children: [
@@ -174,13 +293,47 @@ class _CreateBookScreenState extends State<CreateBookScreen> {
                             selectedGender: selectedGender,
                             selectedAgeGroup: selectedAgeGroup,
                           ),
+                          const SizedBox(height: 30),
+                          // 책 생성 버튼
+                          if (progress == 1.0)
+                            SizedBox(
+                              width: double.infinity,
+                              height: 60,
+                              child: ElevatedButton(
+                                onPressed: isGenerating ? null : _generateBook,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.primaryColor,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                  elevation: 5,
+                                ),
+                                child: isGenerating
+                                    ? const SizedBox(
+                                        width: 20,
+                                        height: 20,
+                                        child: CircularProgressIndicator(
+                                          color: Colors.white,
+                                          strokeWidth: 2,
+                                        ),
+                                      )
+                                    : const Text(
+                                        '동화 생성하기',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                              ),
+                            ),
                         ],
                       ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
           // 되돌아가기 버튼
           Positioned(
             left: 20,

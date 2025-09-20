@@ -4,7 +4,7 @@ import 'book_rating_coin_row.dart';
 
 class BookDetailCard extends StatelessWidget {
   final String title;
-  final String imageUrl;
+  final String? imageUrl;
   final int coin;
   final double rating;
   final String age;
@@ -15,7 +15,7 @@ class BookDetailCard extends StatelessWidget {
   const BookDetailCard(
       {super.key,
       required this.title,
-      required this.imageUrl,
+      this.imageUrl,
       required this.coin,
       required this.rating,
       required this.age,

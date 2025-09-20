@@ -20,4 +20,7 @@ class Routes {
   static const String voiceSetting = 'voiceSetting';
   static const String mypageToFavoritebooks = 'mypageToFavoritebooks';
   static const String mypageToDeleteaccount = 'mypageToDeleteaccount';
+  
+  //Test routes
+  static const String testBookDetail = '/test-book-detail';
 }

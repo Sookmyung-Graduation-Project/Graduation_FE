@@ -4,6 +4,10 @@ import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:phonics/core/const/api_urls.dart';
+import 'package:phonics/core/models/book/book_generation_request.dart';
+import 'package:phonics/core/models/book/book_generation_response.dart';
+import 'package:phonics/core/models/book/book_options.dart';
+import 'package:phonics/core/models/book/book_summary.dart';
 
 class ApiService {
   //변수
@@ -347,6 +351,129 @@ class ApiService {
   /// 필요 시 캐시 초기화
   static void clearDefaultVoiceCache() {
     _cachedDefaultVoiceId = null;
+  }
+
+  // Book Generation API Methods
+  
+  /// 책 생성 옵션 조회
+  static Future<BookOptions?> fetchBookOptions({required String jwt}) async {
+    final url = Uri.parse(ApiUrls.fetchBookOptionsUrl);
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $jwt',
+          'Content-Type': 'application/json',
+        },
+      ).timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body) as Map<String, dynamic>;
+        return BookOptions.fromJson(jsonData);
+      } else {
+        print('==책 옵션 조회 실패== ${response.statusCode} ${response.body}');
+        return null;
+      }
+    } on TimeoutException {
+      print('==책 옵션 조회 실패== 요청 시간 초과');
+      return null;
+    } catch (e) {
+      print('==책 옵션 조회 실패== $e');
+      return null;
+    }
+  }
+
+  /// 책 생성 요청
+  static Future<BookGenerationResponse?> generateBook({
+    required String jwt,
+    required BookGenerationRequest request,
+  }) async {
+    final url = Uri.parse(ApiUrls.generateBookUrl);
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $jwt',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode(request.toJson()),
+      ).timeout(const Duration(seconds: 30));
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body) as Map<String, dynamic>;
+        return BookGenerationResponse.fromJson(jsonData);
+      } else {
+        print('==책 생성 실패== ${response.statusCode} ${response.body}');
+        return null;
+      }
+    } on TimeoutException {
+      print('==책 생성 실패== 요청 시간 초과');
+      return null;
+    } catch (e) {
+      print('==책 생성 실패== $e');
+      return null;
+    }
+  }
+
+  /// 사용자 책 목록 조회
+  static Future<List<BookSummary>?> fetchUserBooks({required String jwt}) async {
+    final url = Uri.parse(ApiUrls.fetchBooksUrl);
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $jwt',
+          'Content-Type': 'application/json',
+        },
+      ).timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body) as List;
+        return jsonData
+            .map((bookJson) => BookSummary.fromJson(bookJson as Map<String, dynamic>))
+            .toList();
+      } else {
+        print('==책 목록 조회 실패== ${response.statusCode} ${response.body}');
+        return null;
+      }
+    } on TimeoutException {
+      print('==책 목록 조회 실패== 요청 시간 초과');
+      return null;
+    } catch (e) {
+      print('==책 목록 조회 실패== $e');
+      return null;
+    }
+  }
+
+  /// 특정 책 상세 조회
+  static Future<BookGenerationResponse?> fetchBookDetail({
+    required String jwt,
+    required String bookId,
+  }) async {
+    final url = Uri.parse('${ApiUrls.fetchBookDetailUrl}/$bookId');
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $jwt',
+          'Content-Type': 'application/json',
+        },
+      ).timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body) as Map<String, dynamic>;
+        return BookGenerationResponse.fromJson(jsonData);
+      } else {
+        print('==책 상세 조회 실패== ${response.statusCode} ${response.body}');
+        return null;
+      }
+    } on TimeoutException {
+      print('==책 상세 조회 실패== 요청 시간 초과');
+      return null;
+    } catch (e) {
+      print('==책 상세 조회 실패== $e');
+      return null;
+    }
   }
   
   static Future<Map<String, dynamic>> markAttendance(

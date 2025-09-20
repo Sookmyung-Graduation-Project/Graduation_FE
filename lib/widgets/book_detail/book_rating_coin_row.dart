@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 class BookRatingCoinRow extends StatelessWidget {
   final int coin;
   final double rating;
-  final String imageUrl;
+  final String? imageUrl;
 
   const BookRatingCoinRow({
     super.key,
     required this.coin,
     required this.rating,
-    required this.imageUrl,
+    this.imageUrl,
   });
 
   @override
@@ -28,11 +28,16 @@ class BookRatingCoinRow extends StatelessWidget {
             height: 200,
             child: Opacity(
               opacity: 0.5,
-              child: Image.network(
-                imageUrl,
-                fit: BoxFit.cover,
-                filterQuality: FilterQuality.high,
-              ),
+              child: imageUrl != null
+                  ? Image.network(
+                      imageUrl!,
+                      fit: BoxFit.cover,
+                      filterQuality: FilterQuality.high,
+                    )
+                  : Container(
+                      color: Colors.grey[300],
+                      child: const Icon(Icons.book, size: 100),
+                    ),
             ),
           ),
           Positioned(
@@ -57,7 +62,13 @@ class BookRatingCoinRow extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: Image.network(imageUrl, height: 200),
+                  child: imageUrl != null
+                      ? Image.network(imageUrl!, height: 200)
+                      : Container(
+                          height: 200,
+                          color: Colors.grey[300],
+                          child: const Icon(Icons.book, size: 100),
+                        ),
                 ),
                 Positioned(
                   top: -12,

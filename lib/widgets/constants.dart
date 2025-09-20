@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class AppColors {
   // 테두리, 기본 버튼 색상
   static const Color kPrimaryBorderColor = Color(0xFFEBC755);
+  static const Color primaryColor = Color(0xFFEBC755);
   static const Color backgroundColor = Color(0xFFFEFFED);
 
   static const kPrimaryBorderWidth = 2.0;

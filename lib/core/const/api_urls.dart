@@ -12,4 +12,10 @@ class ApiUrls {
   static final String testVoiceUrl = '$baseUrl/voice/tts/test';
   static final String ttsWithDefaultVoice = '$baseUrl/voice/tts';
   static final String fetchDefaultVoiceUrl = '$baseUrl/voice/default';
+  
+  // Book Generation
+  static final String generateBookUrl = '$baseUrl/book_generation/generate';
+  static final String fetchBooksUrl = '$baseUrl/book_generation/books';
+  static final String fetchBookDetailUrl = '$baseUrl/book_generation/books';
+  static final String fetchBookOptionsUrl = '$baseUrl/book_generation/options';
 }
