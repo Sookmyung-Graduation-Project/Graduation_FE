@@ -1,6 +1,6 @@
 class ApiUrls {
   // static final String baseUrl = 'http://172.30.1.40:8000';
-  static final String baseUrl = 'http://localhost:8000';
+  static final String baseUrl = 'http://172.30.1.90:8000';
   static final String loginUrl = '$baseUrl/login';
   static final String userInfoUrl = '$baseUrl/me';
   // Voice
@@ -12,4 +12,8 @@ class ApiUrls {
   static final String testVoiceUrl = '$baseUrl/voice/tts/test';
   static final String ttsWithDefaultVoice = '$baseUrl/voice/tts';
   static final String fetchDefaultVoiceUrl = '$baseUrl/voice/default';
+  //book
+  static final String fetchBookOptions = '$baseUrl/book_generation/options';
+  static final String fetchBooksList = '$baseUrl/book_generation/books';
+  static final String generateBooks = '$baseUrl/book_generation/generate';
 }
