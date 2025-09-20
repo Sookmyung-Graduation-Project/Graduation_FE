@@ -5,7 +5,6 @@ import 'package:phonics/core/provider/login_provider.dart';
 import 'package:phonics/core/provider/user_info_provider.dart';
 import 'package:phonics/core/provider/voice_provider.dart';
 import 'package:phonics/core/router/routes.dart';
-import 'package:phonics/core/utils/api_service.dart';
 import 'package:phonics/core/utils/kakao_login.dart';
 
 class LoginScreen extends ConsumerWidget {

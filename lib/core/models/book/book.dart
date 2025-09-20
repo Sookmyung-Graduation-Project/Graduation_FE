@@ -1,4 +1,3 @@
-// lib/core/models/book_item.dart
 class BookItem {
   final String id;
   final String title;

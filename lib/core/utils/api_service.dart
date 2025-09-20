@@ -4,6 +4,8 @@ import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:phonics/core/const/api_urls.dart';
+import 'package:phonics/core/models/book/book.dart';
+import 'package:phonics/core/models/book/book_detail.dart';
 import 'package:phonics/core/models/book/book_options.dart';
 
 class ApiService {
@@ -494,5 +496,52 @@ class ApiService {
       print('==책 생성 오류== $e');
       return null;
     }
+  }
+
+  // 생성된 책 조회
+  static Future<List<BookItem>> fetchMyBooks({String? jwt}) async {
+    final url = Uri.parse(ApiUrls.fetchBooksList);
+    final headers = <String, String>{
+      'accept': 'application/json',
+      if (jwt != null && jwt.isNotEmpty) 'Authorization': 'Bearer $jwt',
+    };
+
+    final resp = await http.get(url, headers: headers);
+    if (resp.statusCode != 200) {
+      throw Exception('책 목록 조회 실패: ${resp.statusCode} ${resp.body}');
+    }
+
+    final decoded = json.decode(utf8.decode(resp.bodyBytes));
+    if (decoded is! List) {
+      throw Exception('예상과 다른 응답 형식(배열이 아님): $decoded');
+    }
+
+    return decoded
+        .map((e) => BookItem.fromJson(Map<String, dynamic>.from(e)))
+        .toList(growable: false);
+  }
+
+  //책 상세 조회
+  static Future<BookDetail> fetchBookDetail({
+    required String id,
+    String? jwt,
+  }) async {
+    final url = Uri.parse(ApiUrls.bookDetail(id));
+    final headers = <String, String>{
+      'accept': 'application/json',
+      if (jwt != null && jwt.isNotEmpty) 'Authorization': 'Bearer $jwt',
+    };
+
+    final resp = await http.get(url, headers: headers);
+    if (resp.statusCode != 200) {
+      throw Exception('책 상세 조회 실패: ${resp.statusCode} ${resp.body}');
+    }
+
+    final decoded = json.decode(utf8.decode(resp.bodyBytes));
+    if (decoded is! Map<String, dynamic>) {
+      throw Exception('예상과 다른 응답 형식(객체가 아님): $decoded');
+    }
+
+    return BookDetail.fromJson(decoded);
   }
 }

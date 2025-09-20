@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phonics/book_content_screen.dart';
+import 'package:phonics/core/models/book/book.dart';
+import 'package:phonics/core/models/book/book_detail.dart';
 import 'package:phonics/core/screens/login_screen.dart';
 import 'package:phonics/screens/book_detail_screen.dart';
 import 'package:phonics/screens/home.dart';
@@ -99,22 +101,44 @@ final GoRouter appRouter = GoRouter(
             builder: (context, state) => const HomeTabScreen(),
             routes: [
               GoRoute(
-                  path: Routes.bookDetail,
-                  builder: (context, state) {
-                    final book = state.extra as Map<String, dynamic>;
-                    return BookDetailScreen(book: book);
-                  },
-                  routes: [
-                    GoRoute(
-                      path: Routes.bookContent,
-                      builder: (context, state) {
-                        final book = state.extra as Map<String, dynamic>;
-                        final pages = List<String>.from(
-                            book['content'] ?? const <String>[]);
-                        return BookContentScreen(pages: pages);
-                      },
-                    ),
-                  ]),
+                path: Routes.bookDetail,
+                builder: (context, state) {
+                  final extra = state.extra;
+                  late final String bookId;
+
+                  if (extra is String) {
+                    bookId = extra;
+                  } else if (extra is Map<String, dynamic>) {
+                    bookId = extra['id'] as String;
+                  } else if (extra is BookItem) {
+                    bookId = extra.id;
+                  } else {
+                    throw Exception('지원하지 않는 extra 타입: ${extra.runtimeType}');
+                  }
+
+                  return BookDetailScreen(
+                      bookId: bookId); // <- BookDetailScreen 수정 필요
+                },
+                routes: [
+                  GoRoute(
+                    path: Routes.bookContent,
+                    builder: (context, state) {
+                      final extra = state.extra;
+                      // 상세 객체나 Map을 받았을 때 pages 뽑기
+                      late final List<String> pages;
+                      if (extra is BookDetail) {
+                        pages = extra.pages;
+                      } else if (extra is Map<String, dynamic>) {
+                        pages = List<String>.from(
+                            extra['pages'] ?? const <String>[]);
+                      } else {
+                        pages = const <String>[];
+                      }
+                      return BookContentScreen(pages: pages);
+                    },
+                  ),
+                ],
+              ),
             ]),
         //마이페이지
         GoRoute(
