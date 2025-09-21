@@ -163,7 +163,17 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
           path: Routes.bookCreation,
           builder: (context, state) => const CreateBookScreen(),
+          routes: [
+            GoRoute(
+              path: '${Routes.bookDetail}/:id',
+              builder: (context, state) {
+                final id = state.pathParameters['id']!;
+                return BookDetailScreen(bookId: id);
+              },
+            ),
+          ],
         ),
+
         // 학습 페이지
         GoRoute(
           path: Routes.study,

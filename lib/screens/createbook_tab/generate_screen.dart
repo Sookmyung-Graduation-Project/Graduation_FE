@@ -1,13 +1,16 @@
 import 'dart:async';
+import 'package:go_router/go_router.dart';
+import 'package:phonics/core/router/routes.dart';
+
 import '../../widgets/constants.dart';
 import '../../widgets/custom_progress_bar_v2.dart';
 import '../../widgets/speech_bubble.dart';
 import '../../widgets/go_button.dart';
 import 'package:flutter/material.dart';
-import '../library_tab/home_tab_screen.dart';
 
 class GeneratingScreen extends StatefulWidget {
-  const GeneratingScreen({super.key});
+  final String bookId;
+  const GeneratingScreen({super.key, required this.bookId});
 
   @override
   State<GeneratingScreen> createState() => _GeneratingScreenState();
@@ -38,13 +41,8 @@ class _GeneratingScreenState extends State<GeneratingScreen> {
     });
   }
 
-  void _goToLibHomeScreen(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const HomeTabScreen(),
-      ),
-    );
+  void _goToBookDetail(BuildContext context) {
+    context.go('${Routes.bookCreation}/${Routes.bookDetail}/${widget.bookId}');
   }
 
   @override
@@ -126,7 +124,7 @@ class _GeneratingScreenState extends State<GeneratingScreen> {
                   const SizedBox(height: 30),
                   if (_showGoButton)
                     GoButton(
-                      onPressed: () => _goToLibHomeScreen(context),
+                      onPressed: () => _goToBookDetail(context),
                     ),
                 ],
               ),

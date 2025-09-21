@@ -53,11 +53,9 @@ class VoiceSelectionScreen extends StatelessWidget {
       return;
     }
 
-    // JWT (있으면 Authorization, 없으면 생략)
     final prefs = await SharedPreferences.getInstance();
     final jwt = prefs.getString('access_token');
 
-    // 1) 로딩 다이얼로그 띄우기 (dialogContext를 받아둔다)
     BuildContext? dialogContext;
     showDialog(
       context: context,
@@ -69,7 +67,6 @@ class VoiceSelectionScreen extends StatelessWidget {
     );
 
     try {
-      // 2) API 호출
       final res = await ApiService.createBook(
         jwt: (jwt != null && jwt.isNotEmpty) ? jwt : null,
         gender: selectedGender,
@@ -79,7 +76,6 @@ class VoiceSelectionScreen extends StatelessWidget {
         voiceOption: selectedVoice,
       );
 
-      // 3) 다이얼로그 안전하게 닫기 (다이얼로그의 context 사용)
       if (dialogContext != null) {
         Navigator.of(dialogContext!, rootNavigator: true).pop();
         dialogContext = null;
@@ -87,22 +83,32 @@ class VoiceSelectionScreen extends StatelessWidget {
 
       if (!context.mounted) return;
 
-      if (res != null) {
-        // 4) 다이얼로그 닫힌 다음 프레임에 push (전환 충돌 방지)
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (!context.mounted) return;
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const GeneratingScreen()),
+      if (res != null && res['success'] == true) {
+        final bookId = res['book_id'] as String?;
+        debugPrint('📘 생성된 book_id: $bookId');
+
+        if (bookId != null && bookId.isNotEmpty) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!context.mounted) return;
+            // bookId를 GeneratingScreen으로 넘김
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => GeneratingScreen(bookId: bookId),
+              ),
+            );
+          });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('book_id를 받지 못했어요. 다시 시도해 주세요.')),
           );
-        });
+        }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('동화 생성에 실패했어요. 잠시 후 다시 시도해 주세요.')),
+          SnackBar(content: Text(res?['message'] ?? '동화 생성 실패')),
         );
       }
     } catch (e) {
-      // 예외 시에도 다이얼로그 닫기 시도
       if (dialogContext != null) {
         Navigator.of(dialogContext!, rootNavigator: true).pop();
         dialogContext = null;

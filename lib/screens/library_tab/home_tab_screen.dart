@@ -29,11 +29,11 @@ class _HomeTabScreenState extends State<HomeTabScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF), // 전체 배경색
+      backgroundColor: const Color(0xFFFFFFFF),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Padding(
-          padding: const EdgeInsets.only(top: 12), // ← 상단 padding 조절
+          padding: const EdgeInsets.only(top: 12),
           child: AppBar(
             backgroundColor: const Color(0xFFFFFFFF),
             elevation: 0,
@@ -61,8 +61,8 @@ class _HomeTabScreenState extends State<HomeTabScreen>
                 ),
                 child: LayoutBuilder(
                   builder: (context, constraints) {
-                    double width = constraints.maxWidth * 0.999; // 338.48 / 375
-                    double height = width * 0.084; // 비율 유지
+                    double width = constraints.maxWidth * 0.999;
+                    double height = width * 0.084;
 
                     return SizedBox(
                       width: width,
@@ -98,8 +98,6 @@ class _HomeTabScreenState extends State<HomeTabScreen>
                   },
                 ),
               ),
-
-              // 탭바
               Container(
                 decoration: const BoxDecoration(
                   color: Color(0xFFFFFFEB),
@@ -110,39 +108,34 @@ class _HomeTabScreenState extends State<HomeTabScreen>
                 ),
                 child: Theme(
                   data: Theme.of(context).copyWith(
-                    splashColor: const Color(0xFFFFFFEB), // 터치 효과 제거용
+                    splashColor: const Color(0xFFFFFFEB),
                     highlightColor: const Color(0xFFFFFFEB),
-                    dividerColor: const Color(0xFFFFFFEB), // 요거 중요!
+                    dividerColor: const Color(0xFFFFFFEB),
                   ),
                   child: TabBar(
                     controller: _tabController,
-
                     indicatorSize: TabBarIndicatorSize.tab,
                     indicatorPadding: const EdgeInsets.symmetric(
-                      horizontal: 1.0, // 가로 폭은 줄이면 늘어난 효과! (좌우 마진 작게)
-                      vertical: 0.4, // 세로 높이 줄이기 (indicator 얇아짐)
+                      horizontal: 1.0,
+                      vertical: 0.4,
                     ),
                     indicator: BoxDecoration(
-                      color: const Color(0xFFFFFFEB), // 배경색
+                      color: const Color(0xFFFFFFEB),
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(25),
                         topRight: Radius.circular(25),
                       ),
                       boxShadow: [
                         BoxShadow(
-                          //color: Colors.black.withOpacity(0.25),
-                          color:
-                              Colors.black.withAlpha(64), // 0.25 * 255 = 약 64
+                          color: Colors.black.withAlpha(64),
                           offset: const Offset(4, 0),
                           blurRadius: 4,
                         ),
                       ],
                     ),
-
-                    indicatorColor: const Color(0xFFFFFFEB), // 기본 선 제거
+                    indicatorColor: const Color(0xFFFFFFEB),
                     labelColor: const Color(0xFF343434),
                     unselectedLabelColor: Colors.grey,
-                    // 여기서 텍스트 스타일 지정
                     labelStyle: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
@@ -159,8 +152,6 @@ class _HomeTabScreenState extends State<HomeTabScreen>
                   ),
                 ),
               ),
-
-              // 탭뷰 (남은 영역 모두 차지)
               Expanded(
                 child: Container(
                   padding: EdgeInsets.zero,
@@ -169,7 +160,7 @@ class _HomeTabScreenState extends State<HomeTabScreen>
                     color: Color(0xFFFFFFEB),
                     border: Border(
                       top: BorderSide(
-                        color: Color(0xFFFFFFEB), // 상단 선 제거
+                        color: Color(0xFFFFFFEB),
                         width: 0,
                       ),
                     ),
@@ -184,6 +175,9 @@ class _HomeTabScreenState extends State<HomeTabScreen>
                   ),
                 ),
               ),
+              SizedBox(
+                height: 100,
+              )
             ],
           ),
         ],
