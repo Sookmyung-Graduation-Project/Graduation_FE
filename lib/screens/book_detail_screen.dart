@@ -20,6 +20,25 @@ class BookDetailScreen extends StatelessWidget {
     return ApiService.fetchBookDetail(id: bookId, jwt: jwt);
   }
 
+  String _coverImageForAge(String ageGroup) {
+    switch (ageGroup) {
+      case '1세 이하':
+        return 'https://github.com/Sookmyung-Graduation-Project/bookcoverdata/blob/main/Level%201.png?raw=true';
+      case '1~2세':
+        return 'https://github.com/Sookmyung-Graduation-Project/bookcoverdata/blob/main/Level%202.png?raw=true';
+      case '3~4세':
+        return 'https://github.com/Sookmyung-Graduation-Project/bookcoverdata/blob/main/Level%203.png?raw=true';
+      case '5~6세':
+        return 'https://github.com/Sookmyung-Graduation-Project/bookcoverdata/blob/main/Level%204.png?raw=true';
+      case '7~8세':
+        return 'https://github.com/Sookmyung-Graduation-Project/bookcoverdata/blob/main/Level%205.png?raw=true';
+      case '9~10세':
+        return 'https://github.com/Sookmyung-Graduation-Project/bookcoverdata/blob/main/Level%206.png?raw=true';
+      default:
+        return 'https://indigenousreadsrisingcom.b-cdn.net/wp-content/uploads/2023/10/1.png';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,8 +59,7 @@ class BookDetailScreen extends StatelessWidget {
               children: [
                 BookDetailCard(
                   title: detail.title,
-                  imageUrl:
-                      'https://img1.daumcdn.net/thumb/R1280x0.fwebp/?fname=http://t1.daumcdn.net/brunch/service/user/9vB/image/MHFCeUJi2rRSfw__IfgBZgoNo3E',
+                  imageUrl: _coverImageForAge(detail.ageGroup),
                   coin: 0,
                   rating: 0.0,
                   age: detail.ageGroup,

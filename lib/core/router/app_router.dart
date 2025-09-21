@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phonics/book_content_screen.dart';
-import 'package:phonics/core/models/book/book.dart';
 import 'package:phonics/core/models/book/book_detail.dart';
 import 'package:phonics/core/screens/login_screen.dart';
 import 'package:phonics/screens/book_detail_screen.dart';
@@ -106,25 +105,23 @@ final GoRouter appRouter = GoRouter(
                   final extra = state.extra;
                   late final String bookId;
 
-                  if (extra is String) {
+                  if (extra is String && extra.isNotEmpty) {
                     bookId = extra;
-                  } else if (extra is Map<String, dynamic>) {
-                    bookId = extra['id'] as String;
-                  } else if (extra is BookItem) {
+                  } else if (extra is BookDetail) {
                     bookId = extra.id;
+                  } else if (extra is Map<String, dynamic>) {
+                    bookId = extra['id'] as String? ?? '';
                   } else {
                     throw Exception('지원하지 않는 extra 타입: ${extra.runtimeType}');
                   }
 
-                  return BookDetailScreen(
-                      bookId: bookId); // <- BookDetailScreen 수정 필요
+                  return BookDetailScreen(bookId: bookId);
                 },
                 routes: [
                   GoRoute(
                     path: Routes.bookContent,
                     builder: (context, state) {
                       final extra = state.extra;
-                      // 상세 객체나 Map을 받았을 때 pages 뽑기
                       late final List<String> pages;
                       if (extra is BookDetail) {
                         pages = extra.pages;

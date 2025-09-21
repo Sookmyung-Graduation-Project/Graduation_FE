@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phonics/core/models/book/book.dart';
-import 'package:phonics/core/models/book/book_mock.dart';
 import 'package:phonics/core/router/routes.dart';
 import 'package:phonics/core/utils/api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,10 +11,29 @@ class RecentSection extends ConsumerWidget {
 
   Future<List<BookItem>> _loadBooks() async {
     final prefs = await SharedPreferences.getInstance();
-    final jwt = prefs.getString('access_token'); // 없으면 null
+    final jwt = prefs.getString('access_token');
     final books = await ApiService.fetchMyBooks(jwt: jwt);
 
     return books;
+  }
+
+  String _coverImageForAge(String ageGroup) {
+    switch (ageGroup) {
+      case '1세 이하':
+        return 'https://github.com/Sookmyung-Graduation-Project/bookcoverdata/blob/main/Level%201.png?raw=true';
+      case '1~2세':
+        return 'https://github.com/Sookmyung-Graduation-Project/bookcoverdata/blob/main/Level%202.png?raw=true';
+      case '3~4세':
+        return 'https://github.com/Sookmyung-Graduation-Project/bookcoverdata/blob/main/Level%203.png?raw=true';
+      case '5~6세':
+        return 'https://github.com/Sookmyung-Graduation-Project/bookcoverdata/blob/main/Level%204.png?raw=true';
+      case '7~8세':
+        return 'https://github.com/Sookmyung-Graduation-Project/bookcoverdata/blob/main/Level%205.png?raw=true';
+      case '9~10세':
+        return 'https://github.com/Sookmyung-Graduation-Project/bookcoverdata/blob/main/Level%206.png?raw=true';
+      default:
+        return 'https://indigenousreadsrisingcom.b-cdn.net/wp-content/uploads/2023/10/1.png';
+    }
   }
 
   @override
@@ -54,14 +72,19 @@ class RecentSection extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ClipRRect(
-                    child: Container(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.network(
+                      _coverImageForAge(book.ageGroup),
                       width: MediaQuery.of(context).size.width * 0.18,
                       height: MediaQuery.of(context).size.width *
                           0.18 *
                           (94 / 67.4),
-                      color: Colors.grey[300],
-                      child: const Icon(Icons.book,
-                          size: 40, color: Colors.black54),
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Container(
+                        color: Colors.grey[300],
+                        child: const Icon(Icons.book,
+                            size: 40, color: Colors.black54),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -78,7 +101,7 @@ class RecentSection extends ConsumerWidget {
                         Text('연령대: ${book.ageGroup}'),
                         const SizedBox(height: 8),
                         LinearProgressIndicator(
-                          value: 0.0, // 읽은 진행도: 추후 서버 값 있으면 매핑
+                          value: 0.0,
                           backgroundColor: Colors.grey[200],
                           color: Colors.amber[400],
                           minHeight: 6,
