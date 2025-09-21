@@ -131,7 +131,10 @@ final GoRouter appRouter = GoRouter(
                       } else {
                         pages = const <String>[];
                       }
-                      return BookContentScreen(pages: pages);
+                      return BookContentScreen(
+                        pages: pages,
+                        bookId: (extra as BookDetail).id,
+                      );
                     },
                   ),
                 ],

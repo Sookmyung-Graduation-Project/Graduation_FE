@@ -6,6 +6,9 @@ import 'package:phonics/core/router/routes.dart';
 import 'package:phonics/core/utils/api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:phonics/core/provider/book_progress_provider.dart';
+import 'package:phonics/core/provider/user_info_provider.dart';
+
 class RecentSection extends ConsumerWidget {
   const RecentSection({super.key});
 
@@ -13,7 +16,6 @@ class RecentSection extends ConsumerWidget {
     final prefs = await SharedPreferences.getInstance();
     final jwt = prefs.getString('access_token');
     final books = await ApiService.fetchMyBooks(jwt: jwt);
-
     return books;
   }
 
@@ -38,6 +40,8 @@ class RecentSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final userId = ref.watch(serverUserProvider)?.id ?? "guest";
+
     return FutureBuilder<List<BookItem>>(
       future: _loadBooks(),
       builder: (context, snapshot) {
@@ -100,13 +104,36 @@ class RecentSection extends ConsumerWidget {
                         Text('주인공: ${book.animal}'),
                         Text('연령대: ${book.ageGroup}'),
                         const SizedBox(height: 8),
-                        LinearProgressIndicator(
-                          value: 0.0,
-                          backgroundColor: Colors.grey[200],
-                          color: Colors.amber[400],
-                          minHeight: 6,
+                        Consumer(
+                          builder: (context, ref, _) {
+                            final progressAsync = ref.watch(
+                              bookProgressProvider(
+                                (userId: userId, bookId: book.id),
+                              ),
+                            );
+
+                            return progressAsync.when(
+                              data: (progress) {
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    LinearProgressIndicator(
+                                      value: progress,
+                                      backgroundColor: Colors.grey[200],
+                                      color: Colors.amber[400],
+                                      minHeight: 6,
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                        '${(progress * 100).toStringAsFixed(0)}% 읽음'),
+                                  ],
+                                );
+                              },
+                              loading: () => const LinearProgressIndicator(),
+                              error: (err, _) => Text("진행률 불러오기 실패: $err"),
+                            );
+                          },
                         ),
-                        const Text("0%"),
                       ],
                     ),
                   ),

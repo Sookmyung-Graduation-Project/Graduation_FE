@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:phonics/core/provider/book_progress_provider.dart';
+import 'package:phonics/core/provider/user_info_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:phonics/core/router/routes.dart';
@@ -9,12 +12,24 @@ import 'package:phonics/widgets/book_detail/book_detail_card.dart';
 import 'package:phonics/core/utils/api_service.dart';
 import 'package:phonics/core/models/book/book_detail.dart';
 
-class BookDetailScreen extends StatelessWidget {
+class BookDetailScreen extends ConsumerStatefulWidget {
   final String bookId;
-
   const BookDetailScreen({super.key, required this.bookId});
 
-  Future<BookDetail> _loadDetail() async {
+  @override
+  ConsumerState<BookDetailScreen> createState() => _BookDetailScreenState();
+}
+
+class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
+  late Future<BookDetail> _detailFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _detailFuture = _loadDetail(widget.bookId);
+  }
+
+  Future<BookDetail> _loadDetail(String bookId) async {
     final prefs = await SharedPreferences.getInstance();
     final jwt = prefs.getString('access_token');
     return ApiService.fetchBookDetail(id: bookId, jwt: jwt);
@@ -41,11 +56,17 @@ class BookDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final userInfo = ref.watch(serverUserProvider);
+    final userId = userInfo?.id ?? 'guest';
+
+    final progressAsync = ref.watch(
+      bookProgressProvider((userId: userId, bookId: widget.bookId)),
+    );
     return Scaffold(
       backgroundColor: const Color(0xffFFFFEB),
       appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0),
       body: FutureBuilder<BookDetail>(
-        future: _loadDetail(),
+        future: _detailFuture,
         builder: (context, snap) {
           if (snap.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -54,6 +75,7 @@ class BookDetailScreen extends StatelessWidget {
             return Center(child: Text('에러: ${snap.error}'));
           }
           final detail = snap.data!;
+
           return SingleChildScrollView(
             child: Column(
               children: [
@@ -67,33 +89,54 @@ class BookDetailScreen extends StatelessWidget {
                   duration: '${detail.pageCount}분',
                   summary: detail.summary,
                 ),
-                _GoToBookButton(detail: detail),
+
+                // 진행률 표시 (Riverpod)
+                progressAsync.when(
+                  data: (progress) => Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        LinearProgressIndicator(
+                          value: progress,
+                          backgroundColor: Colors.grey[200],
+                          color: Colors.amber[400],
+                          minHeight: 6,
+                        ),
+                        const SizedBox(height: 6),
+                        Text('${(progress * 100).toStringAsFixed(0)}% 읽음'),
+                      ],
+                    ),
+                  ),
+                  loading: () => const Padding(
+                    padding: EdgeInsets.all(16),
+                    child: CircularProgressIndicator(),
+                  ),
+                  error: (e, _) => Text('에러: $e'),
+                ),
+                // 읽으러 가기 버튼
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: BasicLgButtonForText(
+                    title: '책 읽으러 가기',
+                    onPressed: () async {
+                      await context.push(
+                        '${Routes.homeTab}/${Routes.bookDetail}/${Routes.bookContent}',
+                        extra: detail,
+                      );
+                      ref.invalidate(bookProgressProvider(
+                          (userId: userId, bookId: widget.bookId)));
+                      ref.invalidate(progressMapProvider(userId));
+                    },
+                  ),
+                ),
+
                 const SizedBox(height: 30),
               ],
             ),
           );
         },
-      ),
-    );
-  }
-}
-
-class _GoToBookButton extends StatelessWidget {
-  final BookDetail detail;
-  const _GoToBookButton({required this.detail});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(20.0),
-      child: BasicLgButtonForText(
-        onPressed: () {
-          context.go(
-            '${Routes.homeTab}/${Routes.bookDetail}/${Routes.bookContent}',
-            extra: detail,
-          );
-        },
-        title: '책 읽으러 가기',
       ),
     );
   }
