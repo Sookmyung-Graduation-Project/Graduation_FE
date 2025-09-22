@@ -17,9 +17,10 @@ import 'package:phonics/screens/createbook_tab/createbook_screen.dart';
 import 'package:phonics/widgets/bottom_nav_bar.dart';
 import 'package:phonics/core/router/routes.dart';
 import 'package:phonics/screens/study_tab/quiz_detailmenu.dart';
+import 'package:phonics/screens/spl2sh_page.dart';
 
 final GoRouter appRouter = GoRouter(
-  initialLocation: Routes.login,
+  initialLocation: Routes.splash,
   routes: [
     GoRoute(
       path: Routes.login,
@@ -89,6 +90,11 @@ final GoRouter appRouter = GoRouter(
         );
       },
       routes: [
+        // 스플래시
+        GoRoute(
+          path: Routes.splash,
+          builder: (context, state) => const Spl2shPage(),
+        ),
         // 홈
         GoRoute(
           path: Routes.home,

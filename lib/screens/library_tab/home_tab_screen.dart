@@ -37,12 +37,21 @@ class _HomeTabScreenState extends State<HomeTabScreen>
           child: AppBar(
             backgroundColor: const Color(0xFFFFFFFF),
             elevation: 0,
-            title: const Text(
-              'App Logo',
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-              ),
+            title: Image.asset(
+              'assets/logo_icons/typo_en.png',
+              width: 170,
+              fit: BoxFit.contain,
+              filterQuality: FilterQuality.high,
+              errorBuilder: (context, error, stackTrace) {
+                return const Text(
+                  'Buddy Books',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                );
+              },
             ),
             centerTitle: false,
           ),

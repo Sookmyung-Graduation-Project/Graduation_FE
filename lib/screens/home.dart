@@ -3,9 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:phonics/core/provider/login_provider.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../data/dailyword_data.dart';
-import '../core/utils/api_service.dart';
-import '../screens/home_calendar.dart';
+import 'package:phonics/data/dailyword_data.dart';
+import 'package:phonics/core/utils/api_service.dart';
+import 'package:phonics/screens/home_calendar.dart';
+import 'package:phonics/core/provider/loading_provider.dart';
 
 class MyHomePage extends ConsumerStatefulWidget {
   const MyHomePage({super.key});
@@ -145,50 +146,52 @@ class _MyHomePageState extends ConsumerState<MyHomePage>
   }
 
   Future<void> _onCheckPressed() async {
-    final prefs = await SharedPreferences.getInstance();
-    final jwt = prefs.getString('access_token');
-    final userId = prefs.getString('user_id');
-    if (jwt == null || userId == null) return;
-    try {
-      final resp = await ApiService.markAttendance(
-          jwt: jwt, userId: userId, isPresent: true);
+    await withLoading(ref, () async {
+      final prefs = await SharedPreferences.getInstance();
+      final jwt = prefs.getString('access_token');
+      final userId = prefs.getString('user_id');
+      if (jwt == null || userId == null) return;
+      try {
+        final resp = await ApiService.markAttendance(
+            jwt: jwt, userId: userId, isPresent: true);
 
-      print('=== 출석체크 응답 ===');
-      print('consecutive_days: ${resp['consecutive_days']}');
-      print('status: ${resp['status']}');
+        print('=== 출석체크 응답 ===');
+        print('consecutive_days: ${resp['consecutive_days']}');
+        print('status: ${resp['status']}');
 
-      // 성공 시 UI 반영 및 애니메이션
-      final int todayIndex = DateTime.now().weekday - 1; // 0=월
-      final updatedConsecutiveDays = (resp['consecutive_days'] ?? 0) as int;
+        // 성공 시 UI 반영 및 애니메이션
+        final int todayIndex = DateTime.now().weekday - 1; // 0=월
+        final updatedConsecutiveDays = (resp['consecutive_days'] ?? 0) as int;
 
-      setState(() {
-        _isChecked = true;
-        _attendedDays = {..._attendedDays, todayIndex};
-        _consecutiveDays = updatedConsecutiveDays; // 서버에서 받은 정확한 연속출석일 사용
-        _showBubble = true;
-      });
-
-      _bubbleAnimationController?.forward().then((_) {
-        Future.delayed(const Duration(milliseconds: 1500), () {
-          if (mounted) {
-            _bubbleAnimationController?.reverse().then((_) {
-              if (mounted) {
-                setState(() {
-                  _showBubble = false;
-                });
-              }
-            });
-          }
+        setState(() {
+          _isChecked = true;
+          _attendedDays = {..._attendedDays, todayIndex};
+          _consecutiveDays = updatedConsecutiveDays; // 서버에서 받은 정확한 연속출석일 사용
+          _showBubble = true;
         });
-      });
-    } catch (e) {
-      print('출석체크 오류: $e');
-      // 실패 시 스낵바 알림
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('출석 체크 실패')),
-      );
-    }
+
+        _bubbleAnimationController?.forward().then((_) {
+          Future.delayed(const Duration(milliseconds: 1500), () {
+            if (mounted) {
+              _bubbleAnimationController?.reverse().then((_) {
+                if (mounted) {
+                  setState(() {
+                    _showBubble = false;
+                  });
+                }
+              });
+            }
+          });
+        });
+      } catch (e) {
+        print('출석체크 오류: $e');
+        // 실패 시 스낵바 알림
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('출석 체크 실패')),
+        );
+      }
+    });
   }
 
   @override
@@ -240,13 +243,21 @@ class _MyHomePageState extends ConsumerState<MyHomePage>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // 앱 로고/이름
-                    Text(
-                      'APP LOGO | ${userResponse?.nickname ?? 'Guest'} 님',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
+                    Image.asset(
+                      'assets/logo_icons/typo_en.png',
+                      width: 170,
+                      fit: BoxFit.contain,
+                      filterQuality: FilterQuality.high,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Text(
+                          'Buddy Books',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        );
+                      },
                     ),
                     const SizedBox(height: 12),
 

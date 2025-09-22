@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:phonics/core/provider/loading_provider.dart';
 import 'package:phonics/core/provider/login_provider.dart';
 import 'package:phonics/core/provider/user_info_provider.dart';
 import 'package:phonics/core/provider/voice_provider.dart';
@@ -24,18 +25,20 @@ class LoginScreen extends ConsumerWidget {
                 // 카카오 로그인 버튼
                 TextButton(
                   onPressed: () async {
-                    final result = await KakaoLoginApi().signWithKakao();
-                    if (result != null) {
-                      ref.read(userResponseProvider.notifier).state =
-                          result.userResponse;
+                    await withLoading(ref, () async {
+                      final result = await KakaoLoginApi().signWithKakao();
+                      if (result != null) {
+                        ref.read(userResponseProvider.notifier).state =
+                            result.userResponse;
 
-                      ref.read(voicesProvider.notifier).state = result.voices;
+                        ref.read(voicesProvider.notifier).state = result.voices;
 
-                      ref.read(serverUserProvider.notifier).state =
-                          result.userInfo;
+                        ref.read(serverUserProvider.notifier).state =
+                            result.userInfo;
 
-                      context.go(Routes.home, extra: result.userResponse);
-                    }
+                        context.go(Routes.home, extra: result.userResponse);
+                      }
+                    });
                   },
                   child: Container(
                     padding: const EdgeInsets.all(16),
@@ -69,12 +72,15 @@ class LoginScreen extends ConsumerWidget {
                 // Google 로그인 버튼 (임시로 카카오 로그인 버튼을 추가)
                 TextButton(
                   onPressed: () async {
-                    final userResponse = await KakaoLoginApi().signWithKakao();
-                    if (userResponse != null) {
-                      // 로그인 성공 후 홈 화면으로 이동
-                      print('로그인 성공: ${userResponse.userInfo.nickname}');
-                      context.go(Routes.home); // GoRouter 사용
-                    }
+                    await withLoading(ref, () async {
+                      final userResponse =
+                          await KakaoLoginApi().signWithKakao();
+                      if (userResponse != null) {
+                        // 로그인 성공 후 홈 화면으로 이동
+                        print('로그인 성공: ${userResponse.userInfo.nickname}');
+                        context.go(Routes.home); // GoRouter 사용
+                      }
+                    });
                   },
                   child: Container(
                     padding: const EdgeInsets.all(16),
