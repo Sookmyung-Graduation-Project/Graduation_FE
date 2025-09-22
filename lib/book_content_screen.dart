@@ -2,18 +2,24 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:phonics/core/provider/book_progress_provider.dart';
+
 import 'package:phonics/core/provider/jwt_provider.dart';
+import 'package:phonics/core/provider/user_info_provider.dart';
+import 'package:phonics/core/repository/local_progress_repository.dart';
 import 'package:phonics/core/utils/api_service.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class BookContentScreen extends ConsumerStatefulWidget {
   final List<String> pages;
+  final String bookId;
 
   const BookContentScreen({
     super.key,
     required this.pages,
+    required this.bookId,
   });
 
   @override
@@ -105,6 +111,23 @@ class _BookContentScreenState extends ConsumerState<BookContentScreen> {
     });
   }
 
+  Future<void> _updateProgress(int pageIndex) async {
+    final userInfo = ref.read(serverUserProvider);
+    final userId = userInfo?.id ?? "guest";
+
+    await LocalProgressRepo.setProgress(
+      userId: userId,
+      bookId: widget.bookId,
+      currentPage: pageIndex + 1,
+      totalPages: widget.pages.length,
+    );
+
+    ref.invalidate(
+      bookProgressProvider((userId: userId, bookId: widget.bookId)),
+    );
+    ref.invalidate(progressMapProvider(userId));
+  }
+
   @override
   void dispose() {
     _player.dispose();
@@ -142,6 +165,7 @@ class _BookContentScreenState extends ConsumerState<BookContentScreen> {
         onPageChanged: (i) {
           _currentIndex = i;
           _speakPage(i);
+          _updateProgress(i);
         },
         itemBuilder: (context, index) {
           return Container(

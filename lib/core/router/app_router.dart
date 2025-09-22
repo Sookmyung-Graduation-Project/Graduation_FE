@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phonics/book_content_screen.dart';
+import 'package:phonics/core/models/book/book_detail.dart';
 import 'package:phonics/core/screens/login_screen.dart';
 import 'package:phonics/screens/book_detail_screen.dart';
 import 'package:phonics/screens/home.dart';
@@ -105,22 +106,45 @@ final GoRouter appRouter = GoRouter(
             builder: (context, state) => const HomeTabScreen(),
             routes: [
               GoRoute(
-                  path: Routes.bookDetail,
-                  builder: (context, state) {
-                    final book = state.extra as Map<String, dynamic>;
-                    return BookDetailScreen(book: book);
-                  },
-                  routes: [
-                    GoRoute(
-                      path: Routes.bookContent,
-                      builder: (context, state) {
-                        final book = state.extra as Map<String, dynamic>;
-                        final pages = List<String>.from(
-                            book['content'] ?? const <String>[]);
-                        return BookContentScreen(pages: pages);
-                      },
-                    ),
-                  ]),
+                path: Routes.bookDetail,
+                builder: (context, state) {
+                  final extra = state.extra;
+                  late final String bookId;
+
+                  if (extra is String && extra.isNotEmpty) {
+                    bookId = extra;
+                  } else if (extra is BookDetail) {
+                    bookId = extra.id;
+                  } else if (extra is Map<String, dynamic>) {
+                    bookId = extra['id'] as String? ?? '';
+                  } else {
+                    throw Exception('지원하지 않는 extra 타입: ${extra.runtimeType}');
+                  }
+
+                  return BookDetailScreen(bookId: bookId);
+                },
+                routes: [
+                  GoRoute(
+                    path: Routes.bookContent,
+                    builder: (context, state) {
+                      final extra = state.extra;
+                      late final List<String> pages;
+                      if (extra is BookDetail) {
+                        pages = extra.pages;
+                      } else if (extra is Map<String, dynamic>) {
+                        pages = List<String>.from(
+                            extra['pages'] ?? const <String>[]);
+                      } else {
+                        pages = const <String>[];
+                      }
+                      return BookContentScreen(
+                        pages: pages,
+                        bookId: (extra as BookDetail).id,
+                      );
+                    },
+                  ),
+                ],
+              ),
             ]),
         //마이페이지
         GoRoute(
@@ -148,7 +172,17 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
           path: Routes.bookCreation,
           builder: (context, state) => const CreateBookScreen(),
+          routes: [
+            GoRoute(
+              path: '${Routes.bookDetail}/:id',
+              builder: (context, state) {
+                final id = state.pathParameters['id']!;
+                return BookDetailScreen(bookId: id);
+              },
+            ),
+          ],
         ),
+
         // 학습 페이지
         GoRoute(
           path: Routes.study,

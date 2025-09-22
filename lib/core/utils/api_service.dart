@@ -4,6 +4,9 @@ import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:phonics/core/const/api_urls.dart';
+import 'package:phonics/core/models/book/book.dart';
+import 'package:phonics/core/models/book/book_detail.dart';
+import 'package:phonics/core/models/book/book_options.dart';
 
 class ApiService {
   //변수
@@ -273,6 +276,7 @@ class ApiService {
       return null;
     }
   }
+
   // 기본 음성의 voice_id 가져오기
   static Future<String?> fetchDefaultVoiceId({
     required String jwt,
@@ -348,7 +352,7 @@ class ApiService {
   static void clearDefaultVoiceCache() {
     _cachedDefaultVoiceId = null;
   }
-  
+
   static Future<Map<String, dynamic>> markAttendance(
       {required String jwt,
       required String userId,
@@ -376,6 +380,7 @@ class ApiService {
       throw Exception('출석 체크 오류');
     }
   }
+
   static Future<Map<String, dynamic>> getAttendanceStatus(
       {required String jwt, required String userId}) async {
     final url = Uri.parse('${ApiUrls.baseUrl}/attendance?user_id=$userId');
@@ -398,5 +403,145 @@ class ApiService {
       print('출석 현황 조회 오류: $e');
       throw Exception('출석 현황 조회 오류');
     }
+  }
+
+  static BookOptions? _cachedBookOptions;
+  static DateTime? _cachedBookOptionsAt;
+
+  /// 책 생성 옵션 조회 (genders, age_groups, lessons, animals, voice_options)
+  static Future<BookOptions?> fetchBookOptions({
+    bool forceRefresh = false,
+    Duration ttl = const Duration(minutes: 30),
+  }) async {
+    // 캐시 유효하면 사용
+    if (!forceRefresh &&
+        _cachedBookOptions != null &&
+        _cachedBookOptionsAt != null &&
+        DateTime.now().difference(_cachedBookOptionsAt!) < ttl) {
+      return _cachedBookOptions;
+    }
+
+    final url = Uri.parse(ApiUrls.fetchBookOptions);
+    try {
+      final resp = await http.get(url, headers: {
+        'accept': 'application/json'
+      }).timeout(const Duration(seconds: 10));
+
+      final bodyText = utf8.decode(resp.bodyBytes);
+
+      if (resp.statusCode == 200) {
+        final Map<String, dynamic> jsonMap = json.decode(bodyText);
+        final opts = BookOptions.fromJson(jsonMap);
+
+        // 캐시 저장
+        _cachedBookOptions = opts;
+        _cachedBookOptionsAt = DateTime.now();
+
+        return opts;
+      } else {
+        print('==옵션 조회 실패== ${resp.statusCode} $bodyText');
+        return null;
+      }
+    } on TimeoutException {
+      print('==옵션 조회 실패== 요청 시간 초과');
+      return null;
+    } catch (e) {
+      print('==옵션 조회 실패== $e');
+      return null;
+    }
+  }
+
+  /// 옵션 캐시 초기화
+  static void clearBookOptionsCache() {
+    _cachedBookOptions = null;
+    _cachedBookOptionsAt = null;
+  }
+
+  // 책 생성
+  static Future<Map<String, dynamic>?> createBook({
+    String? jwt,
+    required String gender,
+    required String ageGroup,
+    required String lesson,
+    required String animal,
+    required String voiceOption,
+  }) async {
+    final url = Uri.parse(ApiUrls.generateBooks);
+
+    final body = json.encode({
+      "gender": gender,
+      "age_group": ageGroup,
+      "lesson": lesson,
+      "animal": animal,
+      "voice_option": voiceOption,
+    });
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $jwt',
+          'Content-Type': 'application/json',
+        },
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        print('==책 생성 실패== ${response.statusCode} ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      print('==책 생성 오류== $e');
+      return null;
+    }
+  }
+
+  // 생성된 책 조회
+  static Future<List<BookItem>> fetchMyBooks({String? jwt}) async {
+    final url = Uri.parse(ApiUrls.fetchBooksList);
+    final headers = <String, String>{
+      'accept': 'application/json',
+      if (jwt != null && jwt.isNotEmpty) 'Authorization': 'Bearer $jwt',
+    };
+
+    final resp = await http.get(url, headers: headers);
+    if (resp.statusCode != 200) {
+      throw Exception('책 목록 조회 실패: ${resp.statusCode} ${resp.body}');
+    }
+
+    final decoded = json.decode(utf8.decode(resp.bodyBytes));
+    if (decoded is! List) {
+      throw Exception('예상과 다른 응답 형식(배열이 아님): $decoded');
+    }
+
+    return decoded
+        .map((e) => BookItem.fromJson(Map<String, dynamic>.from(e)))
+        .toList(growable: false);
+  }
+
+  //책 상세 조회
+  static Future<BookDetail> fetchBookDetail({
+    required String id,
+    String? jwt,
+  }) async {
+    final url = Uri.parse(ApiUrls.bookDetail(id));
+    final headers = <String, String>{
+      'accept': 'application/json',
+      if (jwt != null && jwt.isNotEmpty) 'Authorization': 'Bearer $jwt',
+    };
+
+    final resp = await http.get(url, headers: headers);
+    if (resp.statusCode != 200) {
+      throw Exception('책 상세 조회 실패: ${resp.statusCode} ${resp.body}');
+    }
+
+    final decoded = json.decode(utf8.decode(resp.bodyBytes));
+    if (decoded is! Map<String, dynamic>) {
+      throw Exception('예상과 다른 응답 형식(객체가 아님): $decoded');
+    }
+
+    return BookDetail.fromJson(decoded);
   }
 }
